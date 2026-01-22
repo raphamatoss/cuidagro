@@ -27,8 +27,4 @@ public enum UnidadeFederativa {
     PARANA,
     SANTA_CATARINA,
     RIO_GRANDE_DO_SUL;
-
-    public String getUF() {
-        return
-    }
 }

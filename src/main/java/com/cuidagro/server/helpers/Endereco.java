@@ -5,6 +5,7 @@ import com.cuidagro.server.enums.UnidadeFederativa;
 public class Endereco {
     private UnidadeFederativa estado;
     private String cidade;
+    private String bairro;
     private String rua;
     private Integer cep;
     private Integer numero;
@@ -17,15 +18,29 @@ public class Endereco {
         cep = null;
         numero = null;
         complemento = null;
+        bairro = null;
     }
 
-    public Endereco(UnidadeFederativa estado, String cidade, String rua, Integer cep, Integer numero, String complemento) {
+    public Endereco(UnidadeFederativa estado, String cidade, String bairro, String rua, Integer cep, Integer numero, String complemento) {
         this.estado = estado;
         this.cidade = cidade;
+        this.bairro = bairro;
         this.rua = rua;
         this.cep = cep;
         this.numero = numero;
         this.complemento = complemento;
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(estado.toString()).append(", ");
+        sb.append(cidade).append(", ");
+        sb.append(bairro).append(", ");
+        sb.append(rua).append(", ");
+        sb.append(numero).append(", ");
+        sb.append(complemento).append(".");
+        return sb.toString();
     }
 
     public UnidadeFederativa getEstado() {

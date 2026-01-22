@@ -2,5 +2,6 @@ package com.cuidagro.server.enums;
 
 public enum StatusAlerta {
     PENDENTE,
-    CHECADO;
+    EM_ANDAMENTO,
+    CONCLUIDO;
 }
