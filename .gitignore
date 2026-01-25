@@ -1,0 +1,14 @@
+# Ignora as dependências de ambos os projetos
+**/node_modules/
+
+# Ignora os builds de produção de ambos
+**/dist/
+**/build/
+
+# Ignora variáveis de ambiente (Senhas de Banco de Dados, Chaves de API)
+**/.env
+**/.env.local
+
+# Logs e arquivos de sistema
+.DS_Store
+npm-debug.log*
