@@ -28,7 +28,6 @@ public class DBLogin {
                     return new Agricultor(nome, cpf, nascimento, email, numero);
                 }
                 else {
-                    preparedStatement.close();
                     throw new RuntimeException("Usuário não encontrado.");
                 }
             } catch (Exception e) {

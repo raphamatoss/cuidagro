@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.util.Properties;
 
 public class Configuracao {
-    public static final String path = "src/main/resources/config.properties";
+    public static final String path = "src/main/resources/MYconfig.properties";
     public static Properties p = null;
 
     private static void carregarConfig(String path) {
