@@ -10,6 +10,8 @@ public class Consulta {
     private Medico medico;
     private Agricultor agricultor;
 
+    public Consulta() {}
+
     public Consulta(LocalDateTime diaHora, Local local, Medico medico, Agricultor agricultor) {
         this.diaHora = diaHora;
         this.local = local;

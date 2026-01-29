@@ -2,18 +2,20 @@ package com.cuidagro.server;
 
 import com.cuidagro.server.enums.Especialidade;
 
+import java.time.LocalDate;
+
 public class Medico extends Usuario {
     private String crm;
     private Especialidade especialidade;
 
-    public Medico(String nome, String cpf, Integer idade, String crm, Especialidade especialidade) {
-        super(nome, cpf, idade);
+    public Medico(String nome, String cpf, LocalDate dataNascimento, String crm, Especialidade especialidade, String email, String numero) {
+        super(nome, cpf, dataNascimento, email, numero);
         this.crm = crm;
         this.especialidade = especialidade;
     }
 
-    public Medico(String nome, String cpf, Integer idade) {
-        super(nome, cpf, idade);
+    public Medico(String nome, String cpf, LocalDate dataNascimento, String email, String numero) {
+        super(nome, cpf, dataNascimento, email, numero);
         this.crm = null;
         especialidade = null;
     }

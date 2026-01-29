@@ -1,15 +1,17 @@
 package com.cuidagro.server;
 
+import java.time.LocalDate;
+
 public class AgenteDeSaude extends Usuario {
     private String identificador;
 
-    public AgenteDeSaude(String nome, String cpf, Integer idade, String identificador) {
-        super(nome, cpf, idade);
+    public AgenteDeSaude(String nome, String cpf, LocalDate dataNascimento, String identificador, String email, String numero) {
+        super(nome, cpf, dataNascimento, email, numero);
         this.identificador = identificador;
     }
 
-    public AgenteDeSaude(String nome, String cpf, Integer idade) {
-        super(nome, cpf, idade);
+    public AgenteDeSaude(String nome, String cpf, LocalDate dataNascimento, String email, String numero) {
+        super(nome, cpf, dataNascimento, email, numero);
         this.identificador = null;
     }
 
