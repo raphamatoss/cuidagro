@@ -65,7 +65,7 @@ export default function HomePage() {
         </button>
       </header>
 
-      <main className="px-6 mt-6 flex flex-col gap-6 pb-26">
+      <main className="px-6 mt-6 flex flex-col gap-6 pb-28">
         
         {/* Card de "Check-in diário" */}
         <div className="relative overflow-hidden rounded-3xl bg-agro-blue p-6 text-white shadow-lg shadow-blue-200">
@@ -115,7 +115,7 @@ export default function HomePage() {
       </main>
 
       {/* Barra de navegação inferior  */}
-      <nav className="fixed bottom-0 left-0 right-0 bg-white rounded-t-2xl shadow-[0px_-2px_15px_0px_rgba(209,201,205,0.55)]  shadow-gray-200/50 border border-gray-100 px-6 py-4 flex justify-between items-center z-50">
+      <nav className="fixed bottom-3 left-6 right-6 bg-white rounded-2xl shadow-[0px_-2px_15px_0px_rgba(209,201,205,0.55)]  shadow-gray-200/50 border border-gray-100 px-6 py-4 flex justify-between items-center z-50">
         <NavItem icon={HomeIcon} label="Início" isActive />
         <NavItem icon={Search} label="Buscar" />
         
