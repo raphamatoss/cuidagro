@@ -1,6 +1,7 @@
 import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-import LoginPage from "./pages/Login";
-import HomePage from "./pages/Home";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
+import RegisterPage from "./pages/RegisterPage";
 
 export default function App() {
   return (
@@ -10,6 +11,8 @@ export default function App() {
             
             <Route path="/home" element={<HomePage />} />
             
+            <Route path="/register" element={<RegisterPage/>} />
+
             <Route path="/" element={<Navigate to={"/login"} replace />} />
             
             <Route path="*" element={

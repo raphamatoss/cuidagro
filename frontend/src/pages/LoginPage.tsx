@@ -95,7 +95,9 @@ export default function LoginPage() {
                     </form>
                     <p className="flex flex-col gap-1 mt-8 text-center text-sm text-gray-500 ">
                         Ainda não tem cadastro? <br />
-                        <span className="text-sm font-bold text-agro-blue cursor-pointer hover:text-agro-blue/70 transition-colors active:text-agro-blue/70">
+                        <span 
+                            onClick={() => navigate('/register')}
+                            className="text-sm font-bold text-agro-blue cursor-pointer hover:text-agro-blue/70 transition-colors active:text-agro-blue/70">
                             Cadastre-se
                         </span>
                     </p>
