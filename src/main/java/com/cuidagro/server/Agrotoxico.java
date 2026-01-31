@@ -6,6 +6,8 @@ public class Agrotoxico {
     private String nome;
     private ClasseAgrotoxico classe;
 
+    public Agrotoxico() {}
+
     public Agrotoxico(String nome, ClasseAgrotoxico classe) {
         this.nome = nome;
         this.classe = classe;
