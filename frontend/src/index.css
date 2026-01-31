@@ -4,12 +4,16 @@
   /* Cores */
   --color-agro-blue: #063EB7;
   --color-agro-blue-light: #EFF6FF;
+  --color-white: #ffffff;
   
   --color-agro-green: #1DE434;
   --color-agro-red: #CD0505;
 
+  --text-gray: #1e293b;
+
   /* Tipografia */
   --font-sans: 'Inter', system-ui, sans-serif;
+  --font-logo: 'Stylish';
 
   /* Bordas  */
   --radius-agro-card: 1.5rem;
@@ -19,7 +23,11 @@
 /* Reset Global */
 html, body {
   background-color: var(--color-agro-blue-light);
-  color: #1e293b;
+  color: var(--text-gray);
   font-family: var(--font-sans);
   -webkit-tap-highlight-color: transparent;
+}
+
+button, a {
+  cursor: pointer;
 }
