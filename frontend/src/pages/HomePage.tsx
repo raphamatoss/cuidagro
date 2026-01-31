@@ -75,7 +75,8 @@ export default function HomePage() {
               Registre seus sintomas para manter seu médico atualizado.
             </p>
             <button 
-              className="bg-white text-agro-blue px-6 py-3 rounded-full font-bold text-sm shadow-md active:scale-95 transition-transform flex items-center gap-2"
+              onClick={() => navigate('/symptoms')}
+              className="bg-white text-agro-blue px-6 py-3 rounded-full font-bold text-sm shadow-md active:scale-95 active:bg-white/90 transition-transform flex items-center gap-2 "
             >
               <SmilePlus size={20} />
               Fazer Check-in

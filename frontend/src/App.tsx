@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/RegisterPage";
+import SymptomsPage from "./pages/SymptomsPage";
 
 export default function App() {
   return (
@@ -11,7 +12,7 @@ export default function App() {
             <Route path="/register" element={<RegisterPage/>} />
             
             <Route path="/home" element={<HomePage />} />
-            
+            <Route path="/symptoms" element={<SymptomsPage/>}/>
 
             <Route path="/" element={<Navigate to={"/login"} replace />} />
             
