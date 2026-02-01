@@ -33,7 +33,7 @@ export default function MyHealthPage() {
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 pb-28">
+    <div className="flex min-h-screen flex-col bg-gray-50 pb-16">
       
       {/* HEADER */}
       <header className="bg-white px-4 py-4 shadow-sm sticky top-0 z-20 flex items-center gap-4">
@@ -59,18 +59,31 @@ export default function MyHealthPage() {
           </h2>
           
           <div className="flex flex-col gap-3">
-            {['Hipertensão', 'Diabetes', 'Hipotiroidismo', 'Asma'].map((disease) => (
-              <label key={disease} className="flex items-center gap-3 p-3 border border-gray-100 rounded-xl hover:bg-blue-50 cursor-pointer transition-colors">
-                <input 
-                  type="checkbox"
-                  className="w-5 h-5 accent-agro-blue rounded focus:ring-agro-blue"
-                  checked={diseases.includes(disease)}
-                  onChange={() => toggleItem(diseases, setDiseases, disease)}
-                />
-                <span className="text-gray-700 font-medium">{disease}</span>
-              </label>
-            ))}
-            
+            {['Hipertensão', 'Diabetes', 'Hipotiroidismo', 'Asma'].map((disease) => {
+				const isSelected = diseases.includes(disease);
+              	return (
+			  		<label 
+			  			key={disease} 
+						className={`
+							flex items-center gap-3 p-3 border rounded-xl hover:bg-blue-50 cursor-pointer transition-all
+							${isSelected
+								? 'bg-blue-100/80 border-blue-200 shadow-sm'
+                      			: 'bg-white border-gray-100 hover:bg-gray-50'
+							}`
+						}
+
+					>		
+                	<input 
+						type="checkbox"
+						className="w-5 h-5 accent-agro-blue rounded focus:ring-agro-blue"
+						checked={isSelected}
+						onChange={() => toggleItem(diseases, setDiseases, disease)}
+						/>
+						<span className={`font-medium ${isSelected ? 'text-agro-blue' : 'text-gray-600'}`} >{disease}</span>
+					</label>
+				)
+			})}
+
             {/* Campo "Outra" */}
             <div className="mt-2 ">
                 <Input 
@@ -88,11 +101,19 @@ export default function MyHealthPage() {
           <h2 className="font-bold text-gray-800 mb-4">Medidas Corporais</h2>
           <div className="grid grid-cols-2 gap-4">
             <Input 
-                id="weight" label="Peso (kg)" placeholder="00.0" type="number" step="0.1"
+                id="weight" 
+				label="Peso (kg)" 
+				placeholder="00,0" 
+				type="number" 
+				step="0.1"
                 icon={Weight}
             />
             <Input 
-                id="height" label="Altura (m)" placeholder="1.00" type="number" step="0.01"
+                id="height" 
+				label="Altura (m)" 
+				placeholder="1,00" 
+				type="number" 
+				step="0.01"
                 icon={Ruler}
             />
           </div>
@@ -139,7 +160,7 @@ export default function MyHealthPage() {
 
           <div className="border-t border-gray-100 my-4"></div>
 
-          {/* 2. Intolerância Alimentar (Agora em Lista Vertical de Checkboxes) */}
+          {/* 2. Intolerância Alimentar */}
           <p className="text-sm font-semibold text-gray-700 mb-3">Intolerância alimentar:</p>
           
           <div className="flex flex-col gap-3">
@@ -151,7 +172,7 @@ export default function MyHealthPage() {
                   className={`
                     flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all
                     ${isSelected 
-                      ? 'bg-blue-50 border-agro-blue shadow-sm'
+                      ? 'bg-blue-100/80 border-blue-200 shadow-sm'
                       : 'bg-white border-gray-100 hover:bg-gray-50'}
                   `}
                 >

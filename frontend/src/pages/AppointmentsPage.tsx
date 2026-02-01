@@ -1,42 +1,39 @@
 import { useNavigate } from 'react-router-dom';
 import {
     ChevronLeft,
-    Bell,
-    MessageSquare,
-    Clock,
-    FileText,
-    CalendarPlus,
+    Loader2,
 } from 'lucide-react';
-
-// Dados simulados para preencher a tela
-const nextAppointment = {
-    id: 1,
-    doctor: 'Dr. Roberto Albuquerque',
-    specialty: 'Cardiologista',
-    date: 'Hoje',
-    time: '10am - 11am',
-    image: 'Roberto+Albuquerque', // Para gerar o avatar
-};
-
-const historyAppointments = [
-    {
-        id: 2,
-        doctor: 'Dra. Fernanda Almeida',
-        specialty: 'Pneumologista',
-        date: '16/03/2025',
-        image: 'Fernanda+Almeida',
-    },
-    {
-        id: 3,
-        doctor: 'Dr. Roberto Albuquerque',
-        specialty: 'Cardiologista',
-        date: '27/04/2025',
-        image: 'Roberto+Albuquerque',
-    },
-];
+import type { Appointment } from '../types/appointment';
+import { UpcomingCard } from '../components/appointments/UpcomingCard';
+import { HistoryCard } from '../components/appointments/HistoryCard';
+import { appointmentService } from '../services/appointmentService';
+import { useEffect, useState } from 'react';
 
 export default function AppointmentsPage() {
     const navigate = useNavigate();
+
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
+    const [isLoading, setLoading] = useState(true);
+
+    // Efeito para carregar os dados das consultas
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const data = await appointmentService.getAll();
+                setAppointments(data);
+            } catch (error) {
+                console.error('Erro ao buscar consultas: ', error);
+                alert();
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchData();
+    }, []);
+
+    const upcoming = appointments.find((a) => a.type === 'upcoming'); // Retorna a próxima consulta mais próxima
+    const history = appointments.filter((a) => a.type === 'history'); // Retorna todas as concluídas
 
     return (
         <div className="flex min-h-screen flex-col bg-white pb-28">
@@ -56,108 +53,52 @@ export default function AppointmentsPage() {
             </header>
 
             <main className="p-6 flex flex-col gap-8">
-                {/* SEÇÃO 1: PRÓXIMA CONSULTA (Destaque) */}
-                <section>
-                    <h2 className="text-lg font-semibold text-gray-800 mb-3 ml-1">
-                        Próxima consulta
-                    </h2>
-
-                    <div className="bg-blue-50/80 rounded-3xl p-5 shadow-sm border border-blue-100">
-                        {/* Cabeçalho do Card: Médico */}
-                        <div className="flex items-center gap-4 mb-4 border-b border-blue-100 pb-4">
-                            <img
-                                src={`https://ui-avatars.com/api/?name=${nextAppointment.image}&background=0D8ABC&color=fff`}
-                                alt="Médico"
-                                className="w-10 h-10 rounded-lg object-cover shadow-sm"
-                            />
-                            <div>
-                                <h3 className="font-bold text-gray-800 text-lg leading-tight">
-                                    {nextAppointment.doctor}
-                                </h3>
-                                <p className="text-sm text-gray-500 font-medium">
-                                    {nextAppointment.specialty}
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* Rodapé do Card: Hora e Ações */}
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-2 text-gray-700 font-semibold bg-white/60 px-3 py-1.5 rounded-lg">
-                                <Clock size={18} className="text-agro-blue" />
-                                <span className="text-sm">
-                                    {nextAppointment.date}:{' '}
-                                    <span className="text-sm text-gray-500">
-                                        {nextAppointment.time}
-                                    </span>
-                                </span>
-                            </div>
-
-                            <div className="flex gap-2">
-                                <button className="p-2.5 bg-white rounded-xl text-agro-blue hover:bg-blue-100 transition-colors shadow-sm">
-                                    <Bell size={20} />
-                                </button>
-                                <button className="p-2.5 bg-agro-blue rounded-xl text-white hover:bg-blue-700 transition-colors shadow-md">
-                                    <MessageSquare size={20} />
-                                </button>
-                            </div>
-                        </div>
+                {/* Estado de carregamento */}
+                {isLoading && (
+                    <div className="flex flex-col items-center justify-center py-20 text-gray-400">
+                        <Loader2 className="animate-spin mb-2" size={32} />
+                        <p>Carregando agenda...</p>
                     </div>
-                </section>
+                )}
 
-                {/* SEÇÃO 2: HISTÓRICO */}
-                <section>
-                    <h2 className="text-sm font-semibold text-gray-800 mb-3 ml-1">
-                        Histórico de Consultas
-                    </h2>
-
-                    <div className="flex flex-col gap-4">
-                        {historyAppointments.map((app) => (
-                            <div
-                                key={app.id}
-                                className="bg-blue-50/50 rounded-3xl p-4 shadow-sm border border-blue-50 flex flex-col gap-3"
-                            >
-                                {/* Linha Superior: Info do Médico */}
-                                <div className="flex justify-between items-start">
-                                    <div className="flex items-center gap-3">
-                                        <img
-                                            src={`https://ui-avatars.com/api/?name=${app.image}&background=random&color=fff`}
-                                            alt="Médico"
-                                            className="w-10 h-10 rounded-xl object-cover"
-                                        />
-                                        <div>
-                                            <h3 className="font-bold text-gray-800 text-sm">
-                                                {app.doctor}
-                                            </h3>
-                                            <p className="text-xs text-gray-400">
-                                                {app.specialty}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                {/* Linha Inferior: Data e Ação (Documento) */}
-                                <div className="flex items-center justify-between mt-1 bg-white p-2 rounded-xl border border-blue-50/50">
-                                    <div className="flex items-center gap-2 text-gray-500 pl-2">
-                                        <CalendarPlus size={16} />
-                                        <span className="text-xs font-semibold">
-                                            {app.date}
-                                        </span>
-                                    </div>
-
-                                    <button className="p-2 bg-blue-100 text-agro-blue rounded-lg hover:bg-blue-200 transition-colors">
-                                        <FileText size={18} />
-                                    </button>
-                                </div>
+                {!isLoading && (
+                    <>
+                        {/* SEÇÃO 1: PRÓXIMA CONSULTA */}
+                        {upcoming ? (
+                            <section className='border-b-2 border-gray-200 pb-8'>
+                                <h2 className="text-xl font-semibold text-gray-800 mb-3 ml-1">
+                                    Próxima consulta
+                                </h2>
+                                <UpcomingCard data={upcoming} />
+                            </section>
+                        ) : (
+                            // Caso não tenha consulta agendada
+                            <div className="bg-gray-50 p-6 rounded-2xl text-center text-gray-500">
+                                Nenhuma consulta agendada para breve.
                             </div>
-                        ))}
-                    </div>
-                </section>
+                        )}
+
+                        {/* SEÇÃO 2: HISTÓRICO */}
+                        {history.length > 0 && (
+                            <section>
+                                <h2 className="text-lg font-semibold text-gray-700 mb-3 ml-1">
+                                    Histórico de Consultas
+                                </h2>
+                                <div className="flex flex-col gap-4">
+                                    {history.map((app) => (
+                                        <HistoryCard key={app.id} data={app} />
+                                    ))}
+                                </div>
+                            </section>
+                        )}
+                    </>
+                )}
             </main>
 
             {/* BOTÃO FLUTUANTE FIXO */}
             <div className="fixed bottom-0 left-0 right-0 p-6 bg-white border-t border-gray-50 z-30">
                 <button className="w-full h-14 bg-agro-blue text-white rounded-full font-bold text-lg shadow-lg shadow-blue-200 flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-blue-800">
-                    Agendar Consulta
+                    Agendar consulta
                 </button>
             </div>
         </div>

@@ -46,7 +46,7 @@ export default function LoginPage() {
                 </p>
             </header>
 
-            <main className="flex flex-col items-center size-full">
+            <main className="flex flex-col items-center mx-3">
                 <div className="w-full max-w-sm rounded-2xl bg-agro-blue-light p-8 shadow-xl">
                     <h2 className="mb-6 text-center text-lg font-bold text-gray-800">
                         Acesse sua conta

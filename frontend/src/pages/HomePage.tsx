@@ -106,7 +106,7 @@ export default function HomePage() {
                 <span className="font-bold text-gray-800 mx-auto leading-tight">
                   {item.title}
                 </span>
-                <span className="text-xs text-gray-400 mt-2 mx-auto text-center">
+                <span className="text-xs font-medium text-gray-500 mt-2 mx-auto text-center">
                   {item.description}
                 </span>
               </button>
