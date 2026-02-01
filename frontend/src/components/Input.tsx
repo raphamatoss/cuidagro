@@ -29,7 +29,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps> (
                 <div className="group relative">
                     <div>
                         {Icon && (
-                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-agro-blue transition-colors">
+                            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-agro-blue transition-colors">
                                 <Icon size={20}/>
                             </div>
                         )}
@@ -40,7 +40,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps> (
                         type={inputType}
                         {...rest}
                         className={`
-                            p-3 w-full rounded-xl border-b-3 bg-agro-blue-light px-4 text-gray-700 outline-none transition-all focus:border-agro-blue/50 focus:ring-2 focus:ring-agro-blue-light focus:border-b-2
+                            p-3 w-full rounded-xl border-b-3 bg-gray-50 px-4 text-gray-700 outline-none transition-all focus:border-agro-blue/50 focus:ring-2 focus:ring-agro-blue-light focus:border-b-2
                             placeholder:text-gray-400/90
                             ${Icon ? 'pl-12' : 'pl-4'}
                             ${isPassword ? 'pr-12' : 'pr-4'}

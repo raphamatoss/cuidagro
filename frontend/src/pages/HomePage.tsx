@@ -19,8 +19,8 @@ export default function HomePage() {
   // Dados do menu para gerar o grid dinamicamente
   const menuItems = [
     {
-      title: "Monitorar Saúde",
-      description: "Batimentos e Pressão",
+      title: "Minha Saúde",
+      description: "Ficha de saúde pessoal",
       icon: Activity,
       color: "bg-blue-100 text-blue-600",
       route: "/saude"
