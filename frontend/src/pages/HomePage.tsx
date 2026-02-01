@@ -23,7 +23,7 @@ export default function HomePage() {
       description: "Ficha de saúde pessoal",
       icon: Activity,
       color: "bg-blue-100 text-blue-600",
-      route: "/saude"
+      route: "/health"
     },
     {
       title: "Agrotóxicos",
@@ -37,7 +37,7 @@ export default function HomePage() {
       description: "Histórico e Agendamento",
       icon: Calendar,
       color: "bg-purple-100 text-purple-600",
-      route: "/consultas"
+      route: "/appointments"
     },
     {
       title: "Falar com Médico",

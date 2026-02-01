@@ -12,7 +12,7 @@ export default function MyHealthPage() {
   const [allergies, setAllergies] = useState<string[]>([]);
   const [hasMedAllergy, setHasMedAllergy] = useState<string | null>(null); // 'sim' ou 'nao'
 
-  // Função auxiliar para marcar/desmarcar itens (Doenças e Alimentos)
+  // Função auxiliar para marcar/desmarcar itens
   const toggleItem = (list: string[], setList: React.Dispatch<React.SetStateAction<string[]>>, item: string) => {
     if (list.includes(item)) {
       setList(list.filter(i => i !== item));
