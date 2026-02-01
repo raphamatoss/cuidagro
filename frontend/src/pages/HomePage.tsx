@@ -30,7 +30,7 @@ export default function HomePage() {
       description: "Catálogo e Segurança",
       icon: Sprout,
       color: "bg-green-100 text-green-600",
-      route: "/agrotoxicos"
+      route: "/pesticide"
     },
     {
       title: "Minhas Consultas",
@@ -44,12 +44,12 @@ export default function HomePage() {
       description: "Telemedicina",
       icon: Stethoscope,
       color: "bg-orange-100 text-orange-600",
-      route: "/medico"
+      route: "/doctor"
     }
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-gray-50 ">
+    <div className="flex min-h-screen flex-col bg-gray-50 w-full">
       
       <header className="px-6 pt-12 pb-6 flex items-center justify-between bg-white shadow-sm sticky top-0 z-10">
         <div>

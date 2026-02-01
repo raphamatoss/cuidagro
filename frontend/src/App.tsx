@@ -5,6 +5,7 @@ import RegisterPage from "./pages/RegisterPage";
 import SymptomsPage from "./pages/SymptomsPage";
 import MyHealthPage from "./pages/MyHealthPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
+import PesticidesPage from "./pages/PesticidesPage";
 
 export default function App() {
   return (
@@ -17,6 +18,7 @@ export default function App() {
             <Route path="/symptoms" element={<SymptomsPage/>}/>
             <Route path="/health" element={<MyHealthPage/>}/>
             <Route path="/appointments" element={<AppointmentsPage/>}/>
+            <Route path="/pesticide" element={<PesticidesPage/>}/>
 
             <Route path="/" element={<Navigate to={"/login"} replace />} />
             
