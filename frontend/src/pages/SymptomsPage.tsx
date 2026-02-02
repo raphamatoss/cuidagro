@@ -99,8 +99,35 @@ export default function SymptomsPage() {
 
         console.log('Sintomas enviados:', selectedSymptoms);
         setIsSubmitting(false);
+
+        const nameSymptoms = selectedSymptoms.map((id) => {
+            for (const group of symptomGroups) {
+                const found = group.items.find((item) => item.id === id);
+                if (found) {
+                    return {
+                        id: found.id,
+                        label: found.label,
+                        category: group.category
+                    };
+                }
+            }
+            return { id, label: id };
+        });
+
+        const diagnosticResult = {
+            symptoms: nameSymptoms,
+            possiblePesticides: ["Glifosato", "Paraquat"],
+            recommendations: [
+                "Evitar exposição imediata ao produto",
+                "Lavar as mãos e a pele com água corrente",
+                "Procurar atendimento médico"
+            ]
+        };
+
+
+
         alert('Check-in realizado! Seu médico receberá o relatório.');
-        navigate('/home');
+        navigate('/diagnosis', { state: diagnosticResult });
     };
 
     return (
