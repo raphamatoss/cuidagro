@@ -1,3 +1,2 @@
 1. Adicionar Observer para emitirAlerta() presente na classe Diagnóstico (ou implementar algo equivalente)
-2. Checar o melhor método de comunicação entre os clientes e o servidor
-
+2. Concluir a questão do Mediador das consultas e seus componentes

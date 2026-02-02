@@ -1,28 +1,21 @@
 package com.cuidagro.server;
 import com.cuidagro.server.helpers.Endereco;
-import com.cuidagro.server.helpers.Local;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class Agricultor extends Usuario {
     private Endereco endereco;
-    private String numero;
-    private String email;
     private Historico historico;
 
-    public Agricultor(String nome, String cpf, Integer idade, Endereco endereco, String numero, String email) {
-        super(nome, cpf, idade);
+    public Agricultor(String nome, String cpf, LocalDate dataNascimento, Endereco endereco, String email, String numero) {
+        super(nome, cpf, dataNascimento, email, numero);
         this.endereco = endereco;
-        this.numero = numero;
-        this.email = email;
         historico = new Historico();
     }
 
-    public Agricultor(String nome, String cpf, Integer idade) {
-        super(nome, cpf, idade);
+    public Agricultor(String nome, String cpf, LocalDate dataNascimento, String email, String numero) {
+        super(nome, cpf, dataNascimento, email, numero);
         endereco = null;
-        numero = null;
-        email = null;
         historico = new Historico();
     }
 
@@ -34,17 +27,11 @@ public class Agricultor extends Usuario {
         this.endereco = endereco;
     }
 
-    public String getNumero() {return numero; }
-
-    public void setNumero(String numero) {
-        this.numero = numero;
+    public Historico getHistorico() {
+        return historico;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
+    public void setHistorico(Historico historico) {
+        this.historico = historico;
     }
 }
