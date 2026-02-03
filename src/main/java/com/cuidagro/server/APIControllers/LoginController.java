@@ -8,10 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class LoginController {
-    @GetMapping("/login")
-    public String login(@RequestParam("cpf") String cpf) {
-        Usuario user = DBLogin.login(cpf);
-
-        return Serializacao.serializarUsuario(user);
+    @GetMapping("/teste")
+    public String login() {
+        return "Hello";
     }
+//    public String login(@RequestParam("cpf") String cpf) {
+//        Usuario user = DBLogin.login(cpf);
+//
+//        return Serializacao.serializarUsuario(user);
+//    }
 }

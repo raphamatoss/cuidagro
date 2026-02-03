@@ -1,17 +1,23 @@
 package com.cuidagro.server;
 
 import com.cuidagro.server.mediatorsAndComponents.Component;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
-public abstract class Usuario extends Component {
+public class Usuario extends Component {
+    private String papel;
     private String nome;
     private String cpf;
     private Integer idade;
+    @JsonProperty("datanascimento")
     private LocalDate dataNascimento;
     private String email;
     private String numero;
+    private String senha;
+
+    public Usuario () {}
 
     public Usuario(String nome, String cpf, LocalDate dataNascimento, String email, String numero) {
         this.nome = nome;
@@ -20,6 +26,16 @@ public abstract class Usuario extends Component {
         this.idade = (int) ChronoUnit.YEARS.between(dataNascimento, LocalDate.now());
         this.email = email;
         this.numero = numero;
+    }
+
+    public Usuario(String nome, String cpf, LocalDate dataNascimento, String email, String numero, String senha) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.dataNascimento = dataNascimento;
+        this.idade = (int) ChronoUnit.YEARS.between(dataNascimento, LocalDate.now());
+        this.email = email;
+        this.numero = numero;
+        this.senha = senha;
     }
 
     public String getNome() {
@@ -60,8 +76,20 @@ public abstract class Usuario extends Component {
         return dataNascimento;
     }
 
+    public String getSenha() {
+        return senha;
+    }
+
+    public void setSenha(String senha) {
+        this.senha = senha;
+    }
+
     public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
         idade = (int) ChronoUnit.YEARS.between(dataNascimento, LocalDate.now());
+    }
+
+    public String getPapel() {
+        return papel;
     }
 }

@@ -19,6 +19,12 @@ public class Agricultor extends Usuario {
         historico = new Historico();
     }
 
+    public Agricultor(String nome, String cpf, LocalDate dataNascimento, String email, String numero, String senha) {
+        super(nome, cpf, dataNascimento, email, numero, senha);
+        endereco = null;
+        historico = new Historico();
+    }
+
     public Endereco getEndereco() {
         return endereco;
     }
