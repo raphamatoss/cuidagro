@@ -1,5 +1,3 @@
-import type { Validator } from '../types/register';
-
 /**
  * Valida uma data de nascimento fornecida.
  * - A data de nascimento é obrigatória.
@@ -12,23 +10,17 @@ import type { Validator } from '../types/register';
  *          Retorna `null` se a data for válida.
  */
 
-export const validateBirthDate: Validator = (value) => {
-    if (!value) return 'Data de nascimento é obrigatória';
+export const isAdult = (date: string) => {
+  const birth = new Date(date);
+  const today = new Date();
 
-    const birth = new Date(value);
-    const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  const m = today.getMonth() - birth.getMonth();
 
-    if (birth > today) return 'Data inválida';
+  if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) {
+    age--;
+  }
 
-    const age =
-        today.getFullYear() -
-        birth.getFullYear() -
-        (today <
-        new Date(today.getFullYear(), birth.getMonth(), birth.getDate())
-            ? 1
-            : 0);
-
-    if (age < 18) return 'É necessário ter 18 anos';
-
-    return null;
+  return age >= 18;
 };
+

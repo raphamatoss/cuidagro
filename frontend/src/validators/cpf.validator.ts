@@ -1,5 +1,3 @@
-import type { Validator } from '../types/register';
-
 /**
  * Valida um número de CPF brasileiro.
  *
@@ -20,24 +18,28 @@ import type { Validator } from '../types/register';
  * @returns Uma mensagem de erro em caso de CPF inválido ou `null` se o CPF for válido.
  */
 
-export const validateCPF: Validator = (value) => {
-    const cpf = value.replace(/\D/g, '');
+export const isValidCPF = (cpf: string) => {
+    const cleanCPF = cpf.replace(/\D/g, '');
 
-    if (!cpf) return 'CPF é obrigatório';
-    if (cpf.length !== 11) return 'CPF inválido';
-    if (/^(\d)\1+$/.test(cpf)) return 'CPF inválido';
+    if (cleanCPF.length !== 11) return false;
+    if (/^(\d)\1+$/.test(cleanCPF)) return false;
 
     let sum = 0;
-    for (let i = 0; i < 9; i++) sum += +cpf[i] * (10 - i);
-    let d1 = (sum * 10) % 11;
-    if (d1 === 10) d1 = 0;
-    if (d1 !== +cpf[9]) return 'CPF inválido';
+    for (let i = 0; i < 9; i++) {
+        sum += Number(cleanCPF[i]) * (10 - i);
+    }
+
+    let firstDigit = (sum * 10) % 11;
+    if (firstDigit === 10) firstDigit = 0;
+    if (firstDigit !== Number(cleanCPF[9])) return false;
 
     sum = 0;
-    for (let i = 0; i < 10; i++) sum += +cpf[i] * (11 - i);
-    let d2 = (sum * 10) % 11;
-    if (d2 === 10) d2 = 0;
-    if (d2 !== +cpf[10]) return 'CPF inválido';
+    for (let i = 0; i < 10; i++) {
+        sum += Number(cleanCPF[i]) * (11 - i);
+    }
 
-    return null;
+    let secondDigit = (sum * 10) % 11;
+    if (secondDigit === 10) secondDigit = 0;
+
+    return secondDigit === Number(cleanCPF[10]);
 };

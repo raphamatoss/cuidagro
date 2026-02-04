@@ -11,9 +11,11 @@ import {
 import LogoCuidagro from '../assets/logo';
 import { useNavigate } from 'react-router-dom';
 import { Input } from '../components/Input';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterFormData } from '../features/auth/registerSchema';
+import { maskCPF, maskPhone } from '../utils/masks';
+import { api } from '../services/api';
 
 export default function RegisterPage() {
     const navigate = useNavigate();
@@ -21,6 +23,7 @@ export default function RegisterPage() {
     const {
         register,
         handleSubmit,
+        control,
         formState: { errors, isSubmitting },
     } = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
@@ -28,15 +31,18 @@ export default function RegisterPage() {
 
     const onSubmit = async (data: RegisterFormData) => {
         try {
-            console.log('Dados de cadastro:', data);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            const { confirmPassword, ...payload } = data;
             
-            // Simulação de delay de rede
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            console.log('Dados de cadastro:', payload);
+            
+            await api.post('users/register', payload);
 
             alert("Cadastro realizado com sucesso!");
             navigate('/login'); // Redireciona para o login após sucesso
-        } catch {
-            alert(`Erro ao cadastrar.`);
+        } catch (error){
+            console.error(error);
+            alert(`Erro ao cadastrar. Tente novamente.`);
         }
     };
 
@@ -86,14 +92,21 @@ export default function RegisterPage() {
                         />
 
                         {/* CPF */}
-                        <Input
-                            id="cpf"
-                            label="CPF"
-                            placeholder="000.000.000-00"
-                            icon={FileText}
-                            type="text" // Futuramente aplicar máscara aqui
-                            error={errors.cpf?.message}
-                            {...register('cpf')}
+                        <Controller 
+                            control={control}
+                            name='cpf'
+                            render={({field}) => (
+                                <Input
+                                    {...field}
+                                    id="cpf"
+                                    label="CPF"
+                                    placeholder="000.000.000-00"
+                                    icon={FileText}
+                                    type="text" 
+                                    error={errors.cpf?.message}
+                                    onChange={(e) => field.onChange(maskCPF(e.target.value))}
+                                />
+                            )}
                         />
 
                         {/* Data de Nascimento */}
@@ -108,14 +121,22 @@ export default function RegisterPage() {
                         />
 
                         {/* Telefone */}
-                        <Input
-                            id="phone"
-                            label="Celular (WhatsApp)"
-                            placeholder="(00) 00000-0000"
-                            icon={Phone}
-                            type="tel"
-                            error={errors.phone?.message}
-                            {...register('phone')}
+                        <Controller
+                            control={control}
+                            name='phone'
+                            render={({ field }) => (
+                                <Input
+                                    {...field}
+                                    id="phone"
+                                    label="Celular (WhatsApp)"
+                                    placeholder="(00) 00000-0000"
+                                    icon={Phone}
+                                    type="tel"
+                                    error={errors.phone?.message}
+                                    {...register('phone')}
+                                    onChange={(e) => field.onChange(maskPhone(e.target.value))}
+                                />
+                            )}
                         />
 
                         {/* E-mail */}
@@ -168,7 +189,7 @@ export default function RegisterPage() {
                         Já tem uma conta? <br />
                         <span 
                             onClick={() => navigate('/login')}
-                            className="font-bold text-agro-blue cursor-pointer hover:underline"
+                            className="font-bold text-agro-blue cursor-pointer hover:underline hover:text-agro-blue/80"
                         >
                             Faça Login
                         </span>

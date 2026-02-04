@@ -94,10 +94,10 @@ export default function LoginPage() {
                         </button>
                     </form>
                     <p className="flex flex-col gap-1 mt-8 text-center text-sm text-gray-500 ">
-                        Ainda não tem cadastro? <br />
+                        Ainda não tem cadastro?
                         <span 
                             onClick={() => navigate('/register')}
-                            className="text-sm font-bold text-agro-blue cursor-pointer hover:text-agro-blue/70 transition-colors active:text-agro-blue/70">
+                            className="text-sm font-bold text-agro-blue cursor-pointer hover:text-agro-blue/80 transition-colors active:text-agro-blue/70 hover:underline">
                             Cadastre-se
                         </span>
                     </p>
