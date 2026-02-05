@@ -8,9 +8,11 @@ import { UpcomingCard } from '../components/appointments/UpcomingCard';
 import { HistoryCard } from '../components/appointments/HistoryCard';
 import { appointmentService } from '../services/appointmentService';
 import { useEffect, useState } from 'react';
+import { useModal } from '../contexts/useModalContext';
 
 export default function AppointmentsPage() {
     const navigate = useNavigate();
+    const { showModal } = useModal();
 
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [isLoading, setLoading] = useState(true);
@@ -23,14 +25,18 @@ export default function AppointmentsPage() {
                 setAppointments(data);
             } catch (error) {
                 console.error('Erro ao buscar consultas: ', error);
-                alert();
+                showModal({
+                    type: 'error',
+                    title: 'Falha ao carregar consultas',
+                    description: 'Por favor, tente novamente mais tarde.',
+                });
             } finally {
                 setLoading(false);
             }
         }
-
         fetchData();
-    }, []);
+        
+    }, [showModal]);
 
     const upcoming = appointments.find((a) => a.type === 'upcoming'); // Retorna a próxima consulta mais próxima
     const history = appointments.filter((a) => a.type === 'history'); // Retorna todas as concluídas

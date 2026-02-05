@@ -6,14 +6,14 @@ export const pesticideService = {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve([
-          { id: '1', name: 'Glifosato', type: 'Herbicida', toxicityLevel: 'red' },
-          { id: '2', name: '2,4-D', type: 'Herbicida', toxicityLevel: 'yellow' },
-          { id: '3', name: 'Mancozeb', type: 'Fungicida', toxicityLevel: 'blue' },
-          { id: '4', name: 'Acefato', type: 'Inseticida', toxicityLevel: 'yellow' },
-          { id: '5', name: 'Atrazina', type: 'Herbicida', toxicityLevel: 'green' },
-          { id: '6', name: 'Paraquat', type: 'Herbicida', toxicityLevel: 'red' },
-          { id: '7', name: 'Clorpirifós', type: 'Inseticida', toxicityLevel: 'yellow' },
-          { id: '8', name: 'Carbofuran', type: 'Inseticida', toxicityLevel: 'red' },
+          { id: '1', name: 'Glifosato', type: 'Herbicida', toxicityLevel: 'Alto' },
+          { id: '2', name: '2,4-D', type: 'Herbicida', toxicityLevel: 'Médio' },
+          { id: '3', name: 'Mancozeb', type: 'Fungicida', toxicityLevel: 'Leve' },
+          { id: '4', name: 'Acefato', type: 'Inseticida', toxicityLevel: 'Médio' },
+          { id: '5', name: 'Atrazina', type: 'Herbicida', toxicityLevel: 'Muito leve' },
+          { id: '6', name: 'Paraquat', type: 'Herbicida', toxicityLevel: 'Alto' },
+          { id: '7', name: 'Clorpirifós', type: 'Inseticida', toxicityLevel: 'Médio' },
+          { id: '8', name: 'Carbofuran', type: 'Inseticida', toxicityLevel: 'Alto' },
         ]);
       }, 800);
     });

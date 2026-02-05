@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, CheckCircle2, Circle, Send } from 'lucide-react';
+import { useModal } from '../contexts/useModalContext';
 
 // Definição dos Dados
 const symptomGroups = [
@@ -72,6 +73,7 @@ const symptomGroups = [
 
 export default function SymptomsPage() {
     const navigate = useNavigate();
+    const { showModal } = useModal();
     const [selectedSymptoms, setSelectedSymptoms] = useState<string[]>([]);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -87,9 +89,11 @@ export default function SymptomsPage() {
 
     const handleSubmit = async () => {
         if (selectedSymptoms.length === 0) {
-            alert(
-                'Por favor, selecione pelo menos um sintoma ou volte para a home.',
-            );
+            showModal({
+                type: 'warning',
+                title: 'Atenção',
+                description: 'Por favor, selecione pelo menos um sintoma.',
+            });
             return;
         }
 

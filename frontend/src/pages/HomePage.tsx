@@ -66,7 +66,7 @@ export default function HomePage() {
                 </button>
             </header>
 
-            <main className="px-6 mt-6 flex flex-col gap-6 pb-28">
+            <main className="px-6 mt-6 flex flex-col gap-6 pb-28 z-0">
                 {/* Card de "Check-in diário" */}
                 <div className="relative overflow-hidden rounded-3xl bg-agro-blue p-6 text-white shadow-lg shadow-blue-200">
                     <div className="relative z-10">

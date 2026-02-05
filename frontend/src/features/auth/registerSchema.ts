@@ -25,7 +25,7 @@ export const registerSchema = z
 
         cpf: z
             .string()
-			.or(z.literal(''))
+			.min(1, "Por favor, insira seu CPF")
             .transform((cpf) => cpf.replace(/\D/g, ''))
             .refine(cpf => cpf.length > 0, {
 				message: "Por favor, insira o seu CPF",

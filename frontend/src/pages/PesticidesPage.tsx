@@ -12,9 +12,11 @@ import {
 import type { Pesticide } from '../types/pesticide';
 import { pesticideService } from '../services/pesticideService';
 import { Input } from '../components/Input'; // Reutilizando seu componente de input
+import { useModal } from '../contexts/useModalContext';
 
 export default function PesticidesPage() {
     const navigate = useNavigate();
+    const { showModal } = useModal();
 
     // Estados
     const [pesticides, setPesticides] = useState<Pesticide[]>([]);
@@ -32,13 +34,17 @@ export default function PesticidesPage() {
                 setPesticides(data);
             } catch (error) {
                 console.error(error);
-                alert('Erro ao carregar lista de agrotóxicos');
+                showModal({
+                    type: 'error',
+                    title: 'Falha ao carregar',
+                    description: 'Erro ao carregar lista de agrotóxicos',
+                });
             } finally {
                 setIsLoading(false);
             }
         }
         fetchData();
-    }, []);
+    }, [showModal]);
 
     // Lógica de Seleção (Toggle)
     const togglePesticide = (id: string) => {
@@ -61,7 +67,11 @@ export default function PesticidesPage() {
         await new Promise((resolve) => setTimeout(resolve, 1500));
         console.log('Selecionados:', selectedIds, 'Outro:', otherPesticide);
 
-        alert('Dados enviados com sucesso!');
+        showModal({
+            type: 'success',
+            title: 'Sucesso',
+            description: 'Dados enviados com sucesso!',
+        });
         navigate('/home');
     };
 
@@ -158,9 +168,12 @@ export default function PesticidesPage() {
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation(); // Evita marcar o checkbox ao clicar no info
-                                                alert(
-                                                    `Características do ${item.name}:\nFaixa Toxicológica: ${item.toxicityLevel}`,
-                                                );
+                                                showModal({
+                                                    type: 'info',
+                                                    title: `${item.name}`,
+                                                    description:
+                                                        `Faixa Toxicológica: ${item.toxicityLevel}`,
+                                                });
                                             }}
                                             className="p-2 text-gray-700 hover:text-agro-blue"
                                         >

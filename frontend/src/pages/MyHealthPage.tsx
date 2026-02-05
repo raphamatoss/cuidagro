@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Save, Activity, Ruler, Weight } from 'lucide-react';
 import { Input } from '../components/Input';
+import { useModal } from '../contexts/useModalContext';
 
 export default function MyHealthPage() {
     const navigate = useNavigate();
+    const {showModal} = useModal()
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Estados para os dados do formulário
@@ -32,7 +34,11 @@ export default function MyHealthPage() {
         // Simula salvamento
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        alert('Dados de saúde atualizados com sucesso!');
+        showModal({
+            type: 'success',
+            title: "Sucesso",
+            description: "Seus dados de saúde foram salvos!"
+        });
         navigate('/home');
     };
 

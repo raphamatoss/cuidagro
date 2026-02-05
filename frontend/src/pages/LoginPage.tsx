@@ -27,7 +27,6 @@ export default function LoginPage() {
 
             // Simulação de chamada de API (Backend)
             await new Promise((resolve) => setTimeout(resolve, 2000));
-            throw new Error("Usuario");
             navigate('/home');
         } catch {
             showModal({

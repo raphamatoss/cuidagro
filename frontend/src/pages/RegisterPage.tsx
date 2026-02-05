@@ -16,9 +16,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { registerSchema, type RegisterFormData } from '../features/auth/registerSchema';
 import { maskCPF, maskPhone } from '../utils/masks';
 import { api } from '../services/api';
+import { useModal } from '../contexts/useModalContext';
 
 export default function RegisterPage() {
     const navigate = useNavigate();
+    const { showModal } = useModal();
 
     const {
         register,
@@ -38,11 +40,19 @@ export default function RegisterPage() {
             
             await api.post('users/register', payload);
 
-            alert("Cadastro realizado com sucesso!");
+            showModal({
+                type: 'success',
+                title: 'Usuário cadastrado',
+                description: 'Cadastro realizado com sucesso! Vamos te encaminhar para efetuar login.',
+            });
             navigate('/login'); // Redireciona para o login após sucesso
         } catch (error){
             console.error(error);
-            alert(`Erro ao cadastrar. Tente novamente.`);
+            showModal({
+                type: 'error',
+                title: 'Erro ao cadastrar',
+                description: 'Não foi possível realizar o seu cadastro. Por favor, tente novamente.',
+            });
         }
     };
 
