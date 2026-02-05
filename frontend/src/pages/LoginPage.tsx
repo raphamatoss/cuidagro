@@ -5,9 +5,12 @@ import { Input } from '../components/Input';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '../features/auth/loginSchema';
+import { useModal } from '../contexts/useModalContext';
+
 
 export default function LoginPage() {
     const navigate = useNavigate();
+    const { showModal } = useModal();
 
     const {
         register,
@@ -24,10 +27,14 @@ export default function LoginPage() {
 
             // Simulação de chamada de API (Backend)
             await new Promise((resolve) => setTimeout(resolve, 2000));
-
+            throw new Error("Usuario");
             navigate('/home');
-        } catch  {
-            alert(`Erro ao entrar. Verifique suas credenciais.`);
+        } catch {
+            showModal({
+                type: 'error',
+                title: 'Falha ao Entrar',
+                description: 'E-mail ou senha incorretos. Tente novamente.',
+            });
         }
     };
 
@@ -88,16 +95,18 @@ export default function LoginPage() {
                             disabled={isSubmitting}
                             className=" flex h-14 w-full items-center justify-center gap-2 rounded-full bg-agro-blue text-lg font-bold text-white shadow-md transition-transform active:scale-95 active:bg-agro-blue/90"
                         >
-                            {isSubmitting ? "Entrando..." : "Entrar"}
-                            {!isSubmitting && <ArrowRight className="h-5 w-5" />}
-                            
+                            {isSubmitting ? 'Entrando...' : 'Entrar'}
+                            {!isSubmitting && (
+                                <ArrowRight className="h-5 w-5" />
+                            )}
                         </button>
                     </form>
                     <p className="flex flex-col gap-1 mt-8 text-center text-sm text-gray-500 ">
                         Ainda não tem cadastro?
-                        <span 
+                        <span
                             onClick={() => navigate('/register')}
-                            className="text-sm font-bold text-agro-blue cursor-pointer hover:text-agro-blue/80 transition-colors active:text-agro-blue/70 hover:underline">
+                            className="text-sm font-bold text-agro-blue cursor-pointer hover:text-agro-blue/80 transition-colors active:text-agro-blue/70 hover:underline"
+                        >
                             Cadastre-se
                         </span>
                     </p>
