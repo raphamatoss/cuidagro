@@ -7,6 +7,7 @@ import SymptomsPage from "./pages/SymptomsPage";
 import MyHealthPage from "./pages/MyHealthPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
 import PesticidesPage from "./pages/PesticidesPage";
+import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
   return (
@@ -21,6 +22,9 @@ export default function App() {
                 <Route path="/health" element={<MyHealthPage/>}/>
                 <Route path="/appointments" element={<AppointmentsPage/>}/>
                 <Route path="/pesticide" element={<PesticidesPage/>}/>
+
+                <Route path="/profile" element={<ProfilePage/>}/>
+                
                 <Route path="/" element={<Navigate to={"/login"} replace />} />
         
                 <Route path="*" element={

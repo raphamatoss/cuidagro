@@ -129,7 +129,9 @@ export default function HomePage() {
 
                 {/* Botão central de destaque */}
                 <div className="-mt-8">
-                    <button className="bg-agro-blue p-4 rounded-full shadow-lg shadow-blue-300 text-white hover:bg-blue-700 transition-colors">
+                    <button
+                        onClick={() => navigate('/profile')} 
+                        className="bg-agro-blue p-4 rounded-full shadow-lg shadow-blue-300 text-white hover:bg-blue-700 transition-colors">
                         <User size={28} />
                     </button>
                 </div>
