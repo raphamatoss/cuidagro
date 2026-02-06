@@ -6,10 +6,9 @@ import RegisterPage from "./pages/RegisterPage";
 import SymptomsPage from "./pages/SymptomsPage";
 import MyHealthPage from "./pages/MyHealthPage";
 import AppointmentsPage from "./pages/AppointmentsPage";
-import PesticidesPage from "./pages/PesticidesPage";
 import DiagnosisResultPage from './pages/DiagnosisPage';
-
-
+import PesticidesPage from "./pages/PesticidesPage";
+import ProfilePage from "./pages/ProfilePage";
 export default function App() {
   return (
     <ModalProvider>
@@ -24,8 +23,9 @@ export default function App() {
                 <Route path="/appointments" element={<AppointmentsPage/>}/>
                 <Route path="/pesticide" element={<PesticidesPage/>}/>
                 <Route path="/diagnosis" element={<DiagnosisResultPage />} />
-
+                
                 <Route path="/" element={<Navigate to={"/login"} replace />} />
+                <Route path="/profile" element={<ProfilePage/>}/>
                 
                 <Route path="*" element={
                         // to-do: fazer página Not Found
