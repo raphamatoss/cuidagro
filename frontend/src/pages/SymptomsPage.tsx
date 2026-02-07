@@ -129,8 +129,11 @@ export default function SymptomsPage() {
         };
 
 
-
-        alert('Check-in realizado! Seu médico receberá o relatório.');
+        showModal({
+            type: 'success',
+            title: "Relatório enviado",
+            description: "Seus sintomas foram registrados com sucesso. Seu médico receberá o relatório em breve."
+        });
         navigate('/diagnosis', { state: diagnosticResult });
     };
 

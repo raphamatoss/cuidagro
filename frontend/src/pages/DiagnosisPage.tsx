@@ -12,7 +12,7 @@ export default function DiagnosisPage() {
     const location = useLocation();
 
     // receberá dados da página de check-in
-    const result = location.state as any;
+    const result = location.state;
 
     // se alguém acessar direto a página sem passar pelos sintomas
     if (!result) {
