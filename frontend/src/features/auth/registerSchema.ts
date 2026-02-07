@@ -2,19 +2,26 @@ import { z } from 'zod';
 import { isValidCPF } from '../../validators/cpf.validator';
 import { isAdult } from '../../validators/birthDate.validator';
 
+const UserRoleEnum = z.enum(['AGRICULTOR', 'MEDICO', 'AGENTE_SAUDE'], {
+    error: 'Por favor, selecione um perfil.',
+});
+
 export const registerSchema = z
     .object({
+        role: UserRoleEnum,
+
+        professionalId: z.string().optional(),
+
         name: z
-			.string()
-			.min(1, "Por favor, insira seu nome completo")
+            .string()
+            .min(1, { error: 'Por favor, insira seu nome completo' })
             .trim()
-            .min(3, 'Por favor, insira seu nome completo')
+            .min(3, { error: 'Por favor, insira seu nome completo' })
             .refine((name) => /^[\p{L} ]+$/u.test(name), {
-                message:
-                    'O nome não pode conter números ou caracteres especiais',
+                error: 'O nome não pode conter números ou caracteres especiais',
             })
             .refine((name) => name.split(' ').length >= 2, {
-                message: 'Por favor, insira seu nome completo',
+                error: 'Por favor, insira seu nome completo',
             })
             .transform((name) =>
                 name
@@ -25,59 +32,65 @@ export const registerSchema = z
 
         cpf: z
             .string()
-			.min(1, "Por favor, insira seu CPF")
+            .min(1, { error: 'Por favor, insira seu CPF' })
             .transform((cpf) => cpf.replace(/\D/g, ''))
-            .refine(cpf => cpf.length > 0, {
-				message: "Por favor, insira o seu CPF",
-			})
+            .refine((cpf) => cpf.length > 0, {
+                error: 'Por favor, insira o seu CPF',
+            })
             .refine((cpf) => isValidCPF(cpf), {
-                message: 'CPF inválido, verifique o número digitado',
+                error: 'CPF inválido, verifique o número digitado',
             }),
 
         birthDate: z
             .string()
-            .min(1, 'Por favor, informe sua data de nascimento')
+            .min(1, { error: 'Por favor, informe sua data de nascimento' })
             .refine((date) => !isNaN(Date.parse(date)), {
-                message: 'Data inválida',
+                error: 'Data inválida',
             })
-            .refine(isAdult, {
-                message: 'É necessário ter pelo menos 18 anos',
-            }),
+            .refine(isAdult, { error: 'É necessário ter pelo menos 18 anos' }),
 
         email: z
-            .string()
-            .min(1, 'Por favor, insira um e-mail válido')
-            .email('Formato de e-mail inválido')
+            .email({ error: 'Formato de e-mail inválido' })
             .transform((email) => email.toLowerCase()),
 
         phone: z
             .string()
             .transform((phone) => phone.replace(/\D/g, ''))
-            .refine((phone) => phone.length === 11, {
-                message: 'Telefone inválido, verifique o número digitado',
+            .refine((phone) => phone.length >= 10, {
+                error: 'Telefone inválido, verifique o número digitado',
             }),
 
         password: z
             .string()
-            .min(8, 'A senha deve ter pelo menos 8 caracteres')
+            .min(8, { error: 'A senha deve ter pelo menos 8 caracteres' })
             .refine((pwd) => /[A-Z]/.test(pwd), {
-                message: 'A senha deve conter ao menos uma letra maiúscula',
+                error: 'Maiúscula obrigatória',
             })
             .refine((pwd) => /[a-z]/.test(pwd), {
-                message: 'A senha deve conter ao menos uma letra minúscula',
+                error: 'Minúscula obrigatória',
             })
-            .refine((pwd) => /\d/.test(pwd), {
-                message: 'A senha deve conter ao menos um número',
-            })
+            .refine((pwd) => /\d/.test(pwd), { error: 'Número obrigatório' })
             .refine((pwd) => /[@$!%*?&#]/.test(pwd), {
-                message: 'A senha deve conter um caractere especial',
+                error: 'Caractere especial obrigatório',
             }),
 
         confirmPassword: z.string(),
     })
     .refine((data) => data.password === data.confirmPassword, {
-        message: 'As senhas devem ser idênticas. Por favor, confira novamente.',
+        error: 'As senhas devem ser idênticas.',
         path: ['confirmPassword'],
+    })
+    .superRefine((data, ctx) => {
+        if (data.role !== 'AGRICULTOR') {
+            if (!data.professionalId || data.professionalId.length < 3) {
+                ctx.addIssue({
+                    code: "custom",
+                    message:
+                        'Registro profissional é obrigatório para este perfil',
+                    path: ['professionalId'],
+                });
+            }
+        }
     });
 
 export type RegisterFormData = z.infer<typeof registerSchema>;
