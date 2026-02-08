@@ -1,5 +1,6 @@
 package com.cuidagro.server;
 
+import com.cuidagro.server.enums.PapelUsuario;
 import com.cuidagro.server.mediatorsAndComponents.Component;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -7,7 +8,7 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public class Usuario extends Component {
-    private String papel;
+    private PapelUsuario papel;
     private String nome;
     private String cpf;
     private Integer idade;
@@ -36,6 +37,17 @@ public class Usuario extends Component {
         this.email = email;
         this.numero = numero;
         this.senha = senha;
+    }
+
+    public Usuario(String nome, String cpf, LocalDate dataNascimento, String email, String numero, String senha, PapelUsuario papel) {
+        this.nome = nome;
+        this.cpf = cpf;
+        this.dataNascimento = dataNascimento;
+        this.idade = (int) ChronoUnit.YEARS.between(dataNascimento, LocalDate.now());
+        this.email = email;
+        this.numero = numero;
+        this.senha = senha;
+        this.papel = papel;
     }
 
     public String getNome() {
@@ -89,7 +101,7 @@ public class Usuario extends Component {
         idade = (int) ChronoUnit.YEARS.between(dataNascimento, LocalDate.now());
     }
 
-    public String getPapel() {
+    public PapelUsuario getPapel() {
         return papel;
     }
 }

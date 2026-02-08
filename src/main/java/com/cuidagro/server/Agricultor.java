@@ -1,4 +1,5 @@
 package com.cuidagro.server;
+import com.cuidagro.server.enums.PapelUsuario;
 import com.cuidagro.server.helpers.Endereco;
 
 import java.time.LocalDate;
@@ -21,6 +22,12 @@ public class Agricultor extends Usuario {
 
     public Agricultor(String nome, String cpf, LocalDate dataNascimento, String email, String numero, String senha) {
         super(nome, cpf, dataNascimento, email, numero, senha);
+        endereco = null;
+        historico = new Historico();
+    }
+
+    public Agricultor(String nome, String cpf, LocalDate dataNascimento, String email, String numero, String senha, PapelUsuario papel) {
+        super(nome, cpf, dataNascimento, email, numero, senha, papel);
         endereco = null;
         historico = new Historico();
     }
