@@ -9,15 +9,17 @@ import {
     Circle,
     Send,
 } from 'lucide-react';
+
 import type { Pesticide } from '../types/pesticide';
 import { pesticideService } from '../services/pesticideService';
-import { Input } from '../components/Input'; // Reutilizando seu componente de input
+import { Input } from '../components/Input';
 
 export default function PesticidesPage() {
     const navigate = useNavigate();
 
     // Estados
     const [pesticides, setPesticides] = useState<Pesticide[]>([]);
+    const [selectedNames, setSelectedNames] = useState<string[]>([]);
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [otherPesticide, setOtherPesticide] = useState('');
@@ -29,6 +31,7 @@ export default function PesticidesPage() {
         async function fetchData() {
             try {
                 const data = await pesticideService.getAll();
+                console.log("Dados vindos da API:", data);
                 setPesticides(data);
             } catch (error) {
                 console.error(error);
@@ -37,29 +40,31 @@ export default function PesticidesPage() {
                 setIsLoading(false);
             }
         }
+
         fetchData();
     }, []);
 
-    // Lógica de Seleção (Toggle)
-    const togglePesticide = (id: string) => {
-        setSelectedIds((prev) =>
-            prev.includes(id)
-                ? prev.filter((item) => item !== id)
-                : [...prev, id],
+    // Lógica de Seleção (Toggle) mudei para usar nome ao invés de id
+    const togglePesticide = (name: string) => {
+        setSelectedNames((prev) =>
+            prev.includes(name)
+                ? prev.filter((item) => item !== name)
+                : [...prev, name],
         );
     };
 
-    // Filtragem
+    // Filtragem pelo nome
     const filteredList = pesticides.filter((p) =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase()),
+        p.nome.toLowerCase().includes(searchTerm.toLowerCase()),
     );
 
     // Envio do Formulário
     const handleSubmit = async () => {
         setIsSubmitting(true);
-        // Simulação de envio
+
         await new Promise((resolve) => setTimeout(resolve, 1500));
-        console.log('Selecionados:', selectedIds, 'Outro:', otherPesticide);
+
+        console.log('Selecionados:', selectedNames, 'Outro:', otherPesticide);
 
         alert('Dados enviados com sucesso!');
         navigate('/home');
@@ -76,6 +81,7 @@ export default function PesticidesPage() {
                     >
                         <ChevronLeft size={24} className="text-gray-600" />
                     </button>
+
                     <div>
                         <p className="text-gray-500">Agrotóxicos</p>
                         <h1 className="text-lg font-bold text-gray-700">
@@ -109,21 +115,20 @@ export default function PesticidesPage() {
                     <>
                         <div className="flex flex-col gap-3">
                             {filteredList.map((item) => {
-                                const isSelected = selectedIds.includes(
-                                    item.id,
-                                );
+                                const isSelected = selectedNames.includes(item.nome);
+
                                 return (
                                     <div
                                         key={item.id}
-                                        onClick={() => togglePesticide(item.id)}
+                                        onClick={() => togglePesticide(item.nome)}
                                         className={`
-                                    flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all
-                                    ${
-                                        isSelected
-                                            ? 'bg-blue-50 border-agro-blue/80 shadow-sm'
-                                            : 'bg-white border-gray-100 hover:border-blue-200'
-                                    }
-                                `}
+                                            flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all
+                                            ${
+                                                isSelected
+                                                    ? 'bg-blue-50 border-agro-blue/80 shadow-sm'
+                                                    : 'bg-white border-gray-100 hover:border-blue-200'
+                                            }
+                                        `}
                                     >
                                         <div className="flex items-center gap-3">
                                             {/* Ícone de Checkbox */}
@@ -143,23 +148,26 @@ export default function PesticidesPage() {
 
                                             <div className="flex flex-row items-center gap-2">
                                                 <span
-                                                    className={`font-bold block text-[1rem] ${isSelected ? 'text-agro-blue' : 'text-gray-700'}`}
+                                                    className={`font-bold block text-[1rem] ${
+                                                        isSelected
+                                                            ? 'text-agro-blue'
+                                                            : 'text-gray-700'
+                                                    }`}
                                                 >
-                                                    {item.name}
+                                                    {item.nome}
                                                 </span>
-                                                {/* Badge de Tipo */}
-                                                <span className="text-xs px-2 py-0.5 bg-blue-100 text-gray-700 rounded-full font-semibold">
-                                                    {item.type}
-                                                </span>
+
+                                                
+                                                
                                             </div>
                                         </div>
 
                                         {/* Botão de Info */}
                                         <button
                                             onClick={(e) => {
-                                                e.stopPropagation(); // Evita marcar o checkbox ao clicar no info
+                                                e.stopPropagation();
                                                 alert(
-                                                    `Características do ${item.name}:\nFaixa Toxicológica: ${item.toxicityLevel}`,
+                                                    `Produto: ${item.nome}\nClasse: ${item.classe}`,
                                                 );
                                             }}
                                             className="p-2 text-gray-700 hover:text-agro-blue"
