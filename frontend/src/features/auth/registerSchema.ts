@@ -8,11 +8,11 @@ const UserRoleEnum = z.enum(['AGRICULTOR', 'MEDICO', 'AGENTE_SAUDE'], {
 
 export const registerSchema = z
     .object({
-        role: UserRoleEnum,
+        papel: UserRoleEnum,
 
-        professionalId: z.string().optional(),
+        crm: z.string().optional(),
 
-        name: z
+        nome: z
             .string()
             .min(1, { error: 'Por favor, insira seu nome completo' })
             .trim()
@@ -41,7 +41,7 @@ export const registerSchema = z
                 error: 'CPF inválido, verifique o número digitado',
             }),
 
-        birthDate: z
+        dataNascimento: z
             .string()
             .min(1, { error: 'Por favor, informe sua data de nascimento' })
             .refine((date) => !isNaN(Date.parse(date)), {
@@ -53,14 +53,14 @@ export const registerSchema = z
             .email({ error: 'Formato de e-mail inválido' })
             .transform((email) => email.toLowerCase()),
 
-        phone: z
+        numero: z
             .string()
             .transform((phone) => phone.replace(/\D/g, ''))
             .refine((phone) => phone.length >= 10, {
                 error: 'Telefone inválido, verifique o número digitado',
             }),
 
-        password: z
+        senha: z
             .string()
             .min(8, { error: 'A senha deve ter pelo menos 8 caracteres' })
             .refine((pwd) => /[A-Z]/.test(pwd), {
@@ -74,15 +74,15 @@ export const registerSchema = z
                 error: 'Caractere especial obrigatório',
             }),
 
-        confirmPassword: z.string(),
+        confirmarSenha: z.string(),
     })
-    .refine((data) => data.password === data.confirmPassword, {
+    .refine((data) => data.senha === data.confirmarSenha, {
         error: 'As senhas devem ser idênticas.',
         path: ['confirmPassword'],
     })
     .superRefine((data, ctx) => {
-        if (data.role !== 'AGRICULTOR') {
-            if (!data.professionalId || data.professionalId.length < 3) {
+        if (data.papel !== 'AGRICULTOR') {
+            if (!data.crm || data.crm.length < 3) {
                 ctx.addIssue({
                     code: "custom",
                     message:

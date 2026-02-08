@@ -22,8 +22,8 @@ import {
     type RegisterFormData,
 } from '../features/auth/registerSchema';
 import { maskCPF, maskPhone } from '../utils/masks';
-import { api } from '../services/api';
 import { useModal } from '../contexts/useModalContext';
+import { authService } from '../services/authService';
 
 // Configuração visual dos Cards
 const ROLES = [
@@ -60,31 +60,31 @@ export default function RegisterPage() {
     } = useForm<RegisterFormData>({
         resolver: zodResolver(registerSchema),
         defaultValues: {
-            role: undefined, // Começa sem seleção para forçar o usuário a escolher
+            papel: undefined, // Começa sem seleção para forçar o usuário a escolher
         },
     });
 
     // "Vigia" o valor do cargo em tempo real
     const selectedRole = useWatch({
         control,
-        name: 'role',
+        name: 'papel',
     });
 
     const onSubmit = async (data: RegisterFormData) => {
         try {
             // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            const { confirmPassword, role, professionalId, ...rest } = data;
+            const { confirmarSenha, papel, crm, ...rest } = data;
 
             // Prepara payload para o Java (Mapeando os campos)
             const payload = {
                 ...rest,
-                userRole: role,
-                professionalId: role !== 'AGRICULTOR' ? professionalId : null,
+                papel,
+                crm: papel !== 'AGRICULTOR' ? crm : null,
             };
 
-            console.log('Enviando para o backend:', payload);
+            console.log('Enviando jSON para o backend:', payload);
 
-            await api.post('users/register', payload);
+            await authService.register(payload);
 
             showModal({
                 type: 'success',
@@ -94,7 +94,7 @@ export default function RegisterPage() {
             });
             navigate('/login');
         } catch (error) {
-            console.error(error);
+            console.error("Erro API: ", error);
             showModal({
                 type: 'error',
                 title: 'Erro ao cadastrar',
@@ -139,7 +139,7 @@ export default function RegisterPage() {
                             </label>
 
                             {/* Input escondido para registrar o erro do Zod */}
-                            <input type="hidden" {...register('role')} />
+                            <input type="hidden" {...register('papel')} />
 
                             <div className="grid grid-cols-3 gap-3">
                                 {ROLES.map((roleItem) => {
@@ -150,7 +150,7 @@ export default function RegisterPage() {
                                             key={roleItem.id}
                                             type="button" // type button para não enviar o form
                                             onClick={() =>
-                                                setValue('role', roleItem.id, {
+                                                setValue('papel', roleItem.id, {
                                                     shouldValidate: true,
                                                 })
                                             }
@@ -176,9 +176,9 @@ export default function RegisterPage() {
                                     );
                                 })}
                             </div>
-                            {errors.role && (
+                            {errors.papel && (
                                 <span className="text-red-500 text-xs mt-1 ml-1">
-                                    {errors.role.message}
+                                    {errors.papel.message}
                                 </span>
                             )}
                         </div>
@@ -193,8 +193,8 @@ export default function RegisterPage() {
                             label="Nome Completo"
                             placeholder="Seu nome"
                             icon={User}
-                            error={errors.name?.message}
-                            {...register('name')}
+                            error={errors.nome?.message}
+                            {...register('nome')}
                         />
 
                         <Controller
@@ -220,13 +220,13 @@ export default function RegisterPage() {
                             label="Data de Nascimento"
                             icon={Calendar}
                             type="date"
-                            error={errors.birthDate?.message}
-                            {...register('birthDate')}
+                            error={errors.dataNascimento?.message}
+                            {...register('dataNascimento')}
                         />
 
                         <Controller
                             control={control}
-                            name="phone"
+                            name="numero"
                             render={({ field }) => (
                                 <Input
                                     {...field}
@@ -235,7 +235,7 @@ export default function RegisterPage() {
                                     placeholder="(00) 0 0000-0000"
                                     icon={Phone}
                                     type="tel"
-                                    error={errors.phone?.message}
+                                    error={errors.numero?.message}
                                     onChange={(e) =>
                                         field.onChange(
                                             maskPhone(e.target.value),
@@ -268,8 +268,8 @@ export default function RegisterPage() {
                                     placeholder="Número do registro"
                                     icon={Badge}
                                     className="border-agro-blue/50 bg-blue-50/30"
-                                    error={errors.professionalId?.message}
-                                    {...register('professionalId')}
+                                    error={errors.crm?.message}
+                                    {...register('crm')}
                                 />
                                 <p className="text-[10px] text-agro-blue ml-2 mt-1 font-medium">
                                     * Obrigatório para validação profissional.
@@ -285,8 +285,8 @@ export default function RegisterPage() {
                             placeholder="******"
                             icon={Lock}
                             type="password"
-                            error={errors.password?.message}
-                            {...register('password')}
+                            error={errors.senha?.message}
+                            {...register('senha')}
                         />
 
                         <Input
@@ -295,8 +295,8 @@ export default function RegisterPage() {
                             placeholder="******"
                             icon={Lock}
                             type="password"
-                            error={errors.confirmPassword?.message}
-                            {...register('confirmPassword')}
+                            error={errors.confirmarSenha?.message}
+                            {...register('confirmarSenha')}
                         />
 
                         <button
