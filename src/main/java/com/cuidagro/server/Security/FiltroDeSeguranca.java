@@ -25,6 +25,7 @@ public class FiltroDeSeguranca extends OncePerRequestFilter {
         var token = this.recuperarToken(request);
         if (token != null) {
             var login = tokenService.validarToken(token);
+            System.out.println(login);
             UserDetails user = new UsuarioDetails(DBLogin.login(login));
 
             var authentication = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());

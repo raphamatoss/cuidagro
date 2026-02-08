@@ -21,4 +21,9 @@ public class SintomasController {
     public void persistirUsoDeAgrotoxicosPorUsuario(@RequestBody SintomaForms forms) {
         DBSintomas.persistirForms(forms);
     }
+//
+//    @PostMapping(value="/forms/diagnostico")
+//    public void diagnosticoParcial(@RequestBody Sintoma[] sintomas) {
+//
+//    }
 }

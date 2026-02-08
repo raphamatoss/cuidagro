@@ -1,11 +1,15 @@
 package com.cuidagro.server;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
 public class DadosDeSaude {
     private Float peso;
     private Float altura;
     private ArrayList<Doenca> doencas;
+    @JsonProperty("cpf")
+    private String cpf_agricultor;
 
     public DadosDeSaude () {}
 
@@ -13,6 +17,13 @@ public class DadosDeSaude {
         this.peso = peso;
         this.altura = altura;
         this.doencas = doencas;
+    }
+
+    public DadosDeSaude(Float peso, Float altura, ArrayList<Doenca> doencas, String cpf_agricultor) {
+        this.peso = peso;
+        this.altura = altura;
+        this.doencas = doencas;
+        this.cpf_agricultor = cpf_agricultor;
     }
 
     public Float getPeso() {
@@ -37,5 +48,13 @@ public class DadosDeSaude {
 
     public void setDoencas(ArrayList<Doenca> doencas) {
         this.doencas = doencas;
+    }
+
+    public String getCpf_agricultor() {
+        return cpf_agricultor;
+    }
+
+    public void setCpf_agricultor(String cpf_agricultor) {
+        this.cpf_agricultor = cpf_agricultor;
     }
 }
