@@ -9,6 +9,7 @@ public class Diagnostico {
     private LocalDateTime dataDeRegistro;
     private Agricultor agricultor;
     private Risco risco;
+    private String descricao;
     private String diagnostico;
     private StatusDiagnostico status;
     private Medico medicoResponsavel;
