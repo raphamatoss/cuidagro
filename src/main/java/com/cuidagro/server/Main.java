@@ -14,10 +14,8 @@ public class Main {
         SpringApplication.run(Main.class, args);
 
         //Configurando o acesso ao banco de dados
-        Properties dbConfig = Configuracao.getConfig();
-        String jdbc_url = "jdbc:postgresql://" + dbConfig.getProperty("db_url") + ":"
-        + dbConfig.getProperty("db_port") + "/" + dbConfig.getProperty("db_database");
-        DBConnection.addParametros(jdbc_url, dbConfig.getProperty("db_user"), dbConfig.getProperty("db_pass"));
+        Configuracao.carregarConfig();
+        DBConnection.addParametros(Configuracao.get("db_url"), Configuracao.get("db_user"), Configuracao.get("db_pass"));
 
 //        ArrayList<Sintoma> sintomas = new ArrayList<>();
 //        sintomas.add(new Sintoma("Tosse"));

@@ -1,26 +1,31 @@
 package com.cuidagro.server;
 
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 public class Configuracao {
-    public static final String path = "src/main/resources/MYconfig.properties";
     public static Properties p = null;
 
-    private static void carregarConfig(String path) {
-        try (FileInputStream file = new FileInputStream(path)) {
+    public static void carregarConfig() {
+        try (InputStream is = Configuracao.class
+                .getClassLoader()
+                .getResourceAsStream("application.properties")) {
+
+            if (is == null) {
+                throw new RuntimeException("application.properties não encontrado no classpath");
+            }
+
             p = new Properties();
-            p.load(file);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
+            p.load(is);
+
+        } catch (IOException e) {
+            throw new RuntimeException("Erro ao carregar application.properties", e);
         }
     }
 
-    public static Properties getConfig() {
-        if (p == null) {
-            carregarConfig(path);
-        }
-        return p;
+    public static String get(String key) {
+        return p.getProperty(key);
     }
 }
