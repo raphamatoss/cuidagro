@@ -2,10 +2,13 @@ package com.cuidagro.server;
 
 import com.cuidagro.server.enums.Risco;
 import com.cuidagro.server.enums.StatusDiagnostico;
+import com.cuidagro.server.observerAndSubjects.Subject;
 
 import java.time.LocalDateTime;
 
-public class Diagnostico {
+
+
+public class Diagnostico extends Subject {
     private LocalDateTime dataDeRegistro;
     private Agricultor agricultor;
     private Risco risco;
@@ -33,11 +36,12 @@ public class Diagnostico {
         this.medicoResponsavel = medicoResponsavel;
     }
 
-    // talvez seja necessário um observer para ficar de olho sempre que uma nova instancia de alerta é gerada e salvar ela no BD
-    // to-do: concluir emitir alerta
-    public boolean emitirAlerta () {
+    //to-do resolvido.
+    public boolean emitirAlerta() {
         if (!StatusDiagnostico.conferidoPorMedico(status)) {
             Alerta alerta = new Alerta(this);
+            notificarObservers(alerta);
+
             return true;
         }
         return false;

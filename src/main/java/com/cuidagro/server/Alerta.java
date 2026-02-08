@@ -20,6 +20,16 @@ public class Alerta {
         status = StatusAlerta.PENDENTE;
     }
 
+    // Construtor para reconstruir o objeto vindo do Banco de Dados
+    public Alerta(LocalDateTime dataDeRegistro, StatusAlerta status, Risco risco, Agricultor agricultor) {
+        this.dataDeRegistro = dataDeRegistro;
+        this.status = status;
+        this.risco = risco;
+        this.agricultor = agricultor;
+        // Dúvida se no banco de dados ele vai funcionar assim após pegar o ID.
+        this.diagnostico = null;
+    }
+
     public LocalDateTime getDataDeRegistro() {
         return dataDeRegistro;
     }
