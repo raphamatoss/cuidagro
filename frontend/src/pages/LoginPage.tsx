@@ -6,11 +6,12 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { loginSchema, type LoginFormData } from '../features/auth/loginSchema';
 import { useModal } from '../contexts/useModalContext';
-
+import { useAuth } from '../contexts/AuthContext';
 
 export default function LoginPage() {
     const navigate = useNavigate();
     const { showModal } = useModal();
+    const { signIn } = useAuth();
 
     const {
         register,
@@ -25,14 +26,20 @@ export default function LoginPage() {
         try {
             console.log('Dados prontos para o back-end:', data);
 
-            // Simulação de chamada de API (Backend)
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            await signIn(data);
+
             navigate('/home');
-        } catch {
+        } catch (error) {
+            console.error(error);
+            const msgErro =
+                (error as { response?: { status?: number } })?.response?.status === 403 || (error as { response?: { status?: number } })?.response?.status === 401
+                    ? 'E-mail ou senha incorretos.'
+                    : 'Erro ao conectar com o servidor.';
+
             showModal({
                 type: 'error',
                 title: 'Falha ao Entrar',
-                description: 'E-mail ou senha incorretos. Tente novamente.',
+                description: msgErro,
             });
         }
     };
@@ -67,8 +74,8 @@ export default function LoginPage() {
                             placeholder="Digite seu e-mail"
                             icon={Mail}
                             type="email"
-                            error={errors.email?.message}
-                            {...register('email')}
+                            error={errors.login?.message}
+                            {...register('login')}
                         />
                         <Input
                             id="password"
@@ -76,8 +83,8 @@ export default function LoginPage() {
                             placeholder="Digite sua senha"
                             icon={Lock}
                             type="password"
-                            error={errors.password?.message}
-                            {...register('password')}
+                            error={errors.senha?.message}
+                            {...register('senha')}
                         />
                         {/* Link de Esqueci a Senha */}
                         <div className="text-right">

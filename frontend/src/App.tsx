@@ -9,34 +9,37 @@ import AppointmentsPage from "./pages/AppointmentsPage";
 import DiagnosisResultPage from './pages/DiagnosisPage';
 import PesticidesPage from "./pages/PesticidesPage";
 import ProfilePage from "./pages/ProfilePage";
+import { AuthProvider } from "./contexts/AuthContext";
 export default function App() {
   return (
-    <ModalProvider>
-        <BrowserRouter>
-            <Routes>
-                <Route path="/login" element={<LoginPage />} />
-                <Route path="/register" element={<RegisterPage/>} />
-                
-                <Route path="/home" element={<HomePage />} />
-                <Route path="/symptoms" element={<SymptomsPage/>}/>
-                <Route path="/health" element={<MyHealthPage/>}/>
-                <Route path="/appointments" element={<AppointmentsPage/>}/>
-                <Route path="/pesticide" element={<PesticidesPage/>}/>
-                <Route path="/diagnosis" element={<DiagnosisResultPage />} />
-                
-                <Route path="/" element={<Navigate to={"/login"} replace />} />
-                <Route path="/profile" element={<ProfilePage/>}/>
-                
-                <Route path="*" element={
-                        // to-do: fazer página Not Found
-                        <div className="p-10 text-center text-red-500 ">
-                            Página não encontrada!
-                        </div>
-                    } 
-                />
+    <AuthProvider>
+        <ModalProvider>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/login" element={<LoginPage />} />
+                    <Route path="/register" element={<RegisterPage/>} />
+                    
+                    <Route path="/home" element={<HomePage />} />
+                    <Route path="/symptoms" element={<SymptomsPage/>}/>
+                    <Route path="/health" element={<MyHealthPage/>}/>
+                    <Route path="/appointments" element={<AppointmentsPage/>}/>
+                    <Route path="/pesticide" element={<PesticidesPage/>}/>
+                    <Route path="/diagnosis" element={<DiagnosisResultPage />} />
+                    
+                    <Route path="/" element={<Navigate to={"/login"} replace />} />
+                    <Route path="/profile" element={<ProfilePage/>}/>
+                    
+                    <Route path="*" element={
+                            // to-do: fazer página Not Found
+                            <div className="p-10 text-center text-red-500 ">
+                                Página não encontrada!
+                            </div>
+                        } 
+                    />
 
-            </Routes>
-        </BrowserRouter>    
-    </ModalProvider>
+                </Routes>
+            </BrowserRouter>    
+        </ModalProvider>
+    </AuthProvider>
   );
 }

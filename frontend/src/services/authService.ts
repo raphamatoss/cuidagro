@@ -8,7 +8,7 @@ export const authService = {
     },
 
     login: async (credentials: LoginDTO): Promise<AuthResponse> => {
-        const response = await api.post<AuthResponse>('/auth/login', credentials)
+        const response = await api.post<AuthResponse>('/auth/login', credentials);
         return response.data;
     },
 };
