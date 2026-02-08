@@ -20,7 +20,6 @@ export default function PesticidesPage() {
     // Estados
     const [pesticides, setPesticides] = useState<Pesticide[]>([]);
     const [selectedNames, setSelectedNames] = useState<string[]>([]);
-    const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [otherPesticide, setOtherPesticide] = useState('');
     const [isLoading, setIsLoading] = useState(true);
