@@ -1,18 +1,33 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, Save, Activity, Ruler, Weight } from 'lucide-react';
 import { Input } from '../components/Input';
-import { useModal } from '../contexts/useModalContext';
+import { diseaseService } from '../services/diseaseService';
+import type { Doencas } from '../types/disease';
 
 export default function MyHealthPage() {
     const navigate = useNavigate();
-    const {showModal} = useModal()
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Estados para os dados do formulário
     const [diseases, setDiseases] = useState<string[]>([]);
+    const [availableDiseases, setAvailableDiseases] = useState<Doencas[]>([]);
     const [allergies, setAllergies] = useState<string[]>([]);
     const [hasMedAllergy, setHasMedAllergy] = useState<string | null>(null); // 'sim' ou 'nao'
+
+    // Carregar doenças da API
+    useEffect(() => {
+        const fetchDoencas = async () => {
+            try {
+                const data = await diseaseService.getAll();
+                setAvailableDiseases(data);
+            } catch (error) {
+                console.error('Erro ao carregar doenças', error);
+            }
+        };
+
+        fetchDoencas();
+    }, []);
 
     // Função auxiliar para marcar/desmarcar itens
     const toggleItem = (
@@ -34,11 +49,7 @@ export default function MyHealthPage() {
         // Simula salvamento
         await new Promise((resolve) => setTimeout(resolve, 1500));
 
-        showModal({
-            type: 'success',
-            title: "Sucesso",
-            description: "Seus dados de saúde foram salvos!"
-        });
+        alert('Dados de saúde atualizados com sucesso!');
         navigate('/home');
     };
 
@@ -71,23 +82,19 @@ export default function MyHealthPage() {
                     </h2>
 
                     <div className="flex flex-col gap-3">
-                        {[
-                            'Hipertensão',
-                            'Diabetes',
-                            'Hipotiroidismo',
-                            'Asma',
-                        ].map((disease) => {
-                            const isSelected = diseases.includes(disease);
+                        {availableDiseases.map((doenca) => {
+                            const isSelected = diseases.includes(doenca.nome);
+
                             return (
                                 <label
-                                    key={disease}
+                                    key={doenca.nome}
                                     className={`
-							flex items-center gap-3 p-3 border rounded-xl hover:bg-blue-50 cursor-pointer transition-all
-							${
-                                isSelected
-                                    ? 'bg-blue-100/80 border-blue-200 shadow-sm'
-                                    : 'bg-white border-gray-100 hover:bg-gray-50'
-                            }`}
+                                        flex items-center gap-3 p-3 border rounded-xl hover:bg-blue-50 cursor-pointer transition-all
+                                        ${
+                                            isSelected
+                                                ? 'bg-blue-100/80 border-blue-200 shadow-sm'
+                                                : 'bg-white border-gray-100 hover:bg-gray-50'
+                                        }`}
                                 >
                                     <input
                                         type="checkbox"
@@ -97,14 +104,14 @@ export default function MyHealthPage() {
                                             toggleItem(
                                                 diseases,
                                                 setDiseases,
-                                                disease,
+                                                doenca.nome,
                                             )
                                         }
                                     />
                                     <span
                                         className={`font-medium ${isSelected ? 'text-agro-blue' : 'text-gray-600'}`}
                                     >
-                                        {disease}
+                                        {doenca.nome}
                                     </span>
                                 </label>
                             );
@@ -156,16 +163,15 @@ export default function MyHealthPage() {
                             Alérgico a medicamentos?
                         </p>
                         <div className="flex gap-4">
-                            {/* Opção SIM */}
                             <label
                                 className={`
-                  flex-1 py-3 text-center rounded-xl border cursor-pointer font-bold transition-all shadow-sm
-                  ${
-                      hasMedAllergy === 'Sim'
-                          ? 'bg-green-50 border-green-500 text-green-700 ring-1 ring-green-500'
-                          : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
-                  }
-              `}
+                                    flex-1 py-3 text-center rounded-xl border cursor-pointer font-bold transition-all shadow-sm
+                                    ${
+                                        hasMedAllergy === 'Sim'
+                                            ? 'bg-green-50 border-green-500 text-green-700 ring-1 ring-green-500'
+                                            : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
+                                    }
+                                `}
                             >
                                 <input
                                     type="radio"
@@ -177,16 +183,15 @@ export default function MyHealthPage() {
                                 Sim
                             </label>
 
-                            {/* Opção NÃO */}
                             <label
                                 className={`
-                  flex-1 py-3 text-center rounded-xl border cursor-pointer font-bold transition-all shadow-sm
-                  ${
-                      hasMedAllergy === 'Não'
-                          ? 'bg-red-50 border-red-500 text-red-700 ring-1 ring-red-500'
-                          : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
-                  }
-              `}
+                                    flex-1 py-3 text-center rounded-xl border cursor-pointer font-bold transition-all shadow-sm
+                                    ${
+                                        hasMedAllergy === 'Não'
+                                            ? 'bg-red-50 border-red-500 text-red-700 ring-1 ring-red-500'
+                                            : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
+                                    }
+                                `}
                             >
                                 <input
                                     type="radio"
@@ -202,7 +207,6 @@ export default function MyHealthPage() {
 
                     <div className="border-t border-gray-100 my-4"></div>
 
-                    {/* 2. Intolerância Alimentar */}
                     <p className="text-sm font-semibold text-gray-700 mb-3">
                         Intolerância alimentar:
                     </p>
@@ -220,13 +224,13 @@ export default function MyHealthPage() {
                                 <label
                                     key={food}
                                     className={`
-                    flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all
-                    ${
-                        isSelected
-                            ? 'bg-blue-100/80 border-blue-200 shadow-sm'
-                            : 'bg-white border-gray-100 hover:bg-gray-50'
-                    }
-                  `}
+                                        flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all
+                                        ${
+                                            isSelected
+                                                ? 'bg-blue-100/80 border-blue-200 shadow-sm'
+                                                : 'bg-white border-gray-100 hover:bg-gray-50'
+                                        }
+                                    `}
                                 >
                                     <input
                                         type="checkbox"
@@ -249,7 +253,6 @@ export default function MyHealthPage() {
                             );
                         })}
 
-                        {/* Input para "Outras" intolerâncias */}
                         <div className="mt-2">
                             <Input
                                 id="other_food"
@@ -264,7 +267,6 @@ export default function MyHealthPage() {
                 <div className="h-4"></div>
             </form>
 
-            {/* FOOTER FIXO */}
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 z-30">
                 <button
                     onClick={handleSubmit}

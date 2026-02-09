@@ -1,11 +1,11 @@
-import type { Pesticide } from '../types/pesticide';
+import type { Doencas } from '../types/disease';
 
-export const pesticideService = {
-    getAll: async (): Promise<Pesticide[]> => {
+export const diseaseService = {
+    getAll: async (): Promise<Doencas[]> => {
         const token =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6InZpbmlAZ21haWwuY29tIiwiZXhwIjoxNzcwNjA0NzYxfQ.FhHpNZHqLFwL51Q7H8P5x4TEBPGjGewaCGzdsbL-qmk';
 
-        const response = await fetch('/api/agrotoxicos', {
+        const response = await fetch('/api/doencas', {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json',
@@ -13,10 +13,9 @@ export const pesticideService = {
         });
 
         if (!response.ok) {
-            throw new Error('Erro na busca de pesticidas');
+            throw new Error('Erro na busca de doenças');
         }
 
-        const data = await response.json();
-        return data;
+        return await response.json();
     },
 };
