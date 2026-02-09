@@ -8,7 +8,7 @@ import com.cuidagro.server.Sintoma;
 import java.util.ArrayList;
 
 public class GeradorDePrompt {
-    public static String gerarPrompt(ArrayList<Sintoma> sintomas, ArrayList<Agrotoxico> agrotoxicos, DadosDeSaude dadosDeSaude) {
+    public static String gerarPrompt(ArrayList<Sintoma> sintomas, ArrayList<String> agrotoxicos, DadosDeSaude dadosDeSaude) {
         //inserção de altura e peso
         StringBuilder prompt = new StringBuilder("Sou trabalhador rural e tenho " + dadosDeSaude.getPeso() + "kg e " + dadosDeSaude.getAltura() + "m. ");
 
@@ -31,10 +31,10 @@ public class GeradorDePrompt {
             prompt.append("Trabalho com os seguintes agrotóxicos: ");
             for (int i = 0; i < agrotoxicos.size(); i++) {
                 if (i == agrotoxicos.size()-1) {
-                    prompt.append(agrotoxicos.get(i).getNome()).append(". ");
+                    prompt.append(agrotoxicos.get(i)).append(". ");
                 }
                 else {
-                    prompt.append(agrotoxicos.get(i).getNome()).append(", ");
+                    prompt.append(agrotoxicos.get(i)).append(", ");
                 }
             }
         }

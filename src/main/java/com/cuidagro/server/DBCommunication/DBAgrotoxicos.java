@@ -59,6 +59,29 @@ public class DBAgrotoxicos {
         throw new RuntimeException("Erro ao buscar agrotoxicos no banco de dados.");
     }
 
+    public static ArrayList<String> getByAgricultor(String cpf) {
+        try (Connection con = DBConnection.getConnection()) {
+            String sql = "select * from mydb.agricultor_has_agrotoxico a where a.agricultor_cpf = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpf);
+            try (ResultSet set = preparedStatement.executeQuery()) {
+                ArrayList<String> agrotoxicos = new ArrayList<>();
+                while (set.next()) {
+                    String nome = set.getString("agrotoxico_nome");
+                    agrotoxicos.add(nome);
+                }
+                preparedStatement.close();
+                return agrotoxicos;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        catch (Exception e) {
+            System.out.println("Erro ao estabelecer conexão com o banco de dados: " + e.getMessage());
+        }
+        throw new RuntimeException("Erro ao buscar agrotoxicos no banco de dados.");
+    }
+
     public static void persistirForms(AgrotoxicoForms forms) {
         Connection con = null;
         try {
