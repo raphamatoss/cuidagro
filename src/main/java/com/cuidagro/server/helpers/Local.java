@@ -6,6 +6,8 @@ public class Local {
     private String sala;
     private Endereco endereco;
 
+    public Local(){}
+
     public Local(Endereco endereco) {
         this.endereco = endereco;
         predio = null;
