@@ -2,6 +2,7 @@ package com.cuidagro.server.DBCommunication;
 
 import com.cuidagro.server.DadosDeSaude;
 import com.cuidagro.server.Doenca;
+import com.cuidagro.server.Sintoma;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ public class DBDadosDeSaude {
 
             if (doencas != null) {
                 // insert dos sintomas associados ao id do relato
-                String sql_dados_doencas = "INSERT INTO mydb.dados_de_saude_has_doencas " +
+                String sql_dados_doencas = "INSERT INTO mydb.dados_de_saude_has_doenca " +
                         "(dados_de_saude_id, doenca_nome) VALUES (?, ?)";
                 PreparedStatement preparedStatement_dados_doencas = con.prepareStatement(sql_dados_doencas);
                 for (Doenca s : doencas) {
@@ -71,4 +72,47 @@ public class DBDadosDeSaude {
         }
         return false;
     }
+
+    public static DadosDeSaude getByAgricultor (String cpf) {
+        try (Connection con = DBConnection.getConnection()) {
+            String sql = "select * from mydb.dados_de_saude d where d.agricultor_cpf = ? returning id";
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpf);
+
+            DadosDeSaude dados = new DadosDeSaude();
+
+            int id = 0;
+            try (ResultSet set = preparedStatement.executeQuery(sql)) {
+                if (set.next()) {
+                    id = set.getInt("id");
+                    dados.setPeso(set.getFloat("peso"));
+                    dados.setAltura(set.getFloat("altura"));
+                }
+            }
+            catch (Exception e) {
+                e.getMessage();
+            }
+
+            String sql2 = "select * from mydb.dados_de_saude_has_doenca d where d.id = " + id;
+            Statement statement = con.createStatement();
+
+            try (ResultSet set = statement.executeQuery(sql2)) {
+                ArrayList<Doenca> doencas = new ArrayList<>();
+                while (set.next()) {
+                    Doenca doenca = new Doenca(set.getString("nome"));
+                    doencas.add(doenca);
+                }
+                dados.setDoencas(doencas);
+            }
+            catch (Exception e) {
+                e.getMessage();
+            }
+            return dados;
+        }
+        catch (Exception e) {
+            System.out.println("Erro ao estabelecer conexão com o banco de dados: " + e.getMessage());
+        }
+        throw new RuntimeException("Erro ao buscar deoncas no banco de dados.");
+    }
+
 }
