@@ -21,6 +21,8 @@ public class Endereco {
         bairro = null;
     }
 
+
+
     public Endereco(UnidadeFederativa estado, String cidade, String bairro, String rua, Integer cep, Integer numero, String complemento) {
         this.estado = estado;
         this.cidade = cidade;
@@ -90,4 +92,8 @@ public class Endereco {
     public void setComplemento(String complemento) {
         this.complemento = complemento;
     }
+
+    public String getBairro() { return bairro; }
+
+    public void setBairro(String bairro) { this.bairro = bairro; }
 }

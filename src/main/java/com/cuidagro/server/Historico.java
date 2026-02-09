@@ -1,5 +1,7 @@
 package com.cuidagro.server;
 
+import com.cuidagro.server.enums.StatusConsulta;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -17,19 +19,28 @@ public class Historico {
 
     public void addConsulta(Consulta consulta) {
         consultas.add(consulta);
-        LocalDate data = consulta.getDiaHora().toLocalDate();
-        if (!dataConsultaHash.containsKey(data)) {
-            ArrayList<Consulta> arrayList = new ArrayList<>();
-            arrayList.add(consulta);
-            dataConsultaHash.put(data, arrayList);
+
+        // Validação se data/hora for nulo.
+        if (consulta.getDiaHora() != null) {
+            LocalDate data = consulta.getDiaHora().toLocalDate();
+
+            if (!dataConsultaHash.containsKey(data)) {
+                ArrayList<Consulta> arrayList = new ArrayList<>();
+                arrayList.add(consulta);
+                dataConsultaHash.put(data, arrayList);
+            } else {
+                // É por referência, então basta dar o get e adicionar
+                dataConsultaHash.get(data).add(consulta);
+            }
         }
-        else {
-            // preciso confirmar se a atribuição nesse caso é por valor ou por referência, caso seja por referência o
-            // trecho "dataConsultaHash.put(data, arrayList);" é desnecessário
-            ArrayList<Consulta> arrayList = dataConsultaHash.get(data);
-            arrayList.add(consulta);
-            dataConsultaHash.put(data, arrayList);
+    }
+
+    public void cancelConsulta(Consulta consulta) {
+        if(!consultas.contains(consulta)){
+            System.out.println("ERRO: Consulta não encontrada no histórico");
+            return;
         }
+        consulta.setStatus(StatusConsulta.CANCELADA);
     }
 
     public void addDiagnostico(Diagnostico diagnostico) {

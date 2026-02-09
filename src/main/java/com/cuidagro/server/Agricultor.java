@@ -8,6 +8,8 @@ public class Agricultor extends Usuario {
     private Endereco endereco;
     private Historico historico;
 
+    public Agricultor() {}
+
     public Agricultor(String nome, String cpf, LocalDate dataNascimento, Endereco endereco, String email, String numero) {
         super(nome, cpf, dataNascimento, email, numero);
         this.endereco = endereco;

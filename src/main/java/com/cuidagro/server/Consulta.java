@@ -1,5 +1,6 @@
 package com.cuidagro.server;
 
+import com.cuidagro.server.enums.StatusConsulta;
 import com.cuidagro.server.helpers.Local;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ public class Consulta {
     private Local local;
     private Medico medico;
     private Agricultor agricultor;
+    private StatusConsulta status;
 
     public Consulta() {}
 
@@ -17,6 +19,7 @@ public class Consulta {
         this.local = local;
         this.medico = medico;
         this.agricultor = agricultor;
+        status = StatusConsulta.PENDENTE;
     }
 
     public LocalDateTime getDiaHora() {
@@ -50,4 +53,8 @@ public class Consulta {
     public void setAgricultor(Agricultor agricultor) {
         this.agricultor = agricultor;
     }
+
+    public StatusConsulta getStatus() { return status; }
+
+    public void setStatus(StatusConsulta status) { this.status = status; }
 }
