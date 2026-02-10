@@ -13,10 +13,10 @@ export function HistoryCard({ data }: Props) {
                 <div className="flex items-center gap-3">
                     <div>
                         <h3 className="font-bold text-gray-800 text-[1rem]">
-                            {data.doctor.name}
+                            {data.medico.nome}
                         </h3>
                         <p className="text-[1rem] text-gray-400">
-                            {data.doctor.specialty}
+                            {data.medico.especialidade}
                         </p>
                     </div>
                 </div>
@@ -26,7 +26,7 @@ export function HistoryCard({ data }: Props) {
             <div className="flex items-center justify-between mt-1 bg-white p-2 rounded-xl border border-blue-50/50">
                 <div className="flex items-center gap-2 text-gray-500 pl-2">
                     <CalendarPlus size={20} />
-                    <span className="text-sm font-semibold">{data.date}</span>
+                    <span className="text-sm font-semibold">{data.data}</span>
                 </div>
 
                 <button className="p-3 bg-blue-100 text-agro-blue rounded-lg hover:bg-blue-200 transition-colors active:scale-95" title='Acessar receita'>

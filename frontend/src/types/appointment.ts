@@ -1,12 +1,24 @@
+export type AppointmentStatus = 'PENDENTE' | 'AGENDADA' | 'CANCELADA' | 'CONCLUIDA';
+
+export interface Doctor {
+    nome: string;
+    especialidade: string;
+}
+
 export interface Appointment {
-    id: string | number;
-    doctor: {
-        name: string;
-        specialty: string;
-        avatarUrl?: string; // Opcional
-    };
-    date: string; // Ex: "20/10/2025" ou "Hoje"
-    time?: string; // Ex: "10:00 - 11:00" (Opcional para histórico)
-    status: 'scheduled' | 'completed' | 'canceled';
-    type: 'upcoming' | 'history';
+    id: number;
+    medico: Doctor;
+    data: string;       
+    hora: string;       
+    status: AppointmentStatus;
+}
+
+export interface ConsultaDTO {
+    id: number;
+    hora: string;
+    data: string;
+    status: AppointmentStatus;     
+    medico: Doctor;
+    agricultor?: string;
+    local?: string;
 }

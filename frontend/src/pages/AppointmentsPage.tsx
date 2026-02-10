@@ -1,18 +1,17 @@
 import { useNavigate } from 'react-router-dom';
-import {
-    ChevronLeft,
-    Loader2,
-} from 'lucide-react';
+import { ChevronLeft, Loader2 } from 'lucide-react';
 import type { Appointment } from '../types/appointment';
 import { UpcomingCard } from '../components/appointments/UpcomingCard';
 import { HistoryCard } from '../components/appointments/HistoryCard';
 import { appointmentService } from '../services/appointmentService';
 import { useEffect, useState } from 'react';
 import { useModal } from '../contexts/useModalContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function AppointmentsPage() {
     const navigate = useNavigate();
     const { showModal } = useModal();
+    const { user } = useAuth();
 
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [isLoading, setLoading] = useState(true);
@@ -20,26 +19,42 @@ export default function AppointmentsPage() {
     // Efeito para carregar os dados das consultas
     useEffect(() => {
         async function fetchData() {
+            if (!user?.cpf) {
+                setLoading(false);
+                return;
+            }
+            
             try {
-                const data = await appointmentService.getAll();
+                const data = await appointmentService.getAll(user.cpf);
                 setAppointments(data);
+                console.log(data);
+                
             } catch (error) {
                 console.error('Erro ao buscar consultas: ', error);
                 showModal({
                     type: 'error',
                     title: 'Falha ao carregar consultas',
-                    description: 'Por favor, tente novamente mais tarde.',
+                    description: 'Não foi possível buscar sua agenda.',
                 });
             } finally {
                 setLoading(false);
             }
         }
         fetchData();
-        
-    }, [showModal]);
+    }, [user, showModal]);
 
-    const upcoming = appointments.find((a) => a.type === 'upcoming'); // Retorna a próxima consulta mais próxima
-    const history = appointments.filter((a) => a.type === 'history'); // Retorna todas as concluídas
+    const activeAppointments = appointments.filter(
+        (a) => a.status === 'AGENDADA' || a.status === 'PENDENTE',
+    );
+
+    // Pegamos a primeira da lista de ativas para ser a "Destaque"
+    const nextAppointment =
+        activeAppointments.length > 0 ? activeAppointments[0] : null;
+
+    // Consideramos "Histórico" tudo que já foi finalizado
+    const historyAppointments = appointments.filter(
+        (a) => a.status === 'CONCLUIDA' || a.status === 'CANCELADA',
+    );
 
     return (
         <div className="flex min-h-screen flex-col bg-white pb-28">
@@ -70,12 +85,12 @@ export default function AppointmentsPage() {
                 {!isLoading && (
                     <>
                         {/* SEÇÃO 1: PRÓXIMA CONSULTA */}
-                        {upcoming ? (
-                            <section className='border-b-2 border-gray-200 pb-8'>
+                        {nextAppointment ? (
+                            <section className="border-b-2 border-gray-200 pb-8">
                                 <h2 className="text-xl font-semibold text-gray-800 mb-3 ml-1">
                                     Próxima consulta
                                 </h2>
-                                <UpcomingCard data={upcoming} />
+                                <UpcomingCard data={nextAppointment} />
                             </section>
                         ) : (
                             // Caso não tenha consulta agendada
@@ -85,13 +100,13 @@ export default function AppointmentsPage() {
                         )}
 
                         {/* SEÇÃO 2: HISTÓRICO */}
-                        {history.length > 0 && (
+                        {historyAppointments.length > 0 && (
                             <section>
                                 <h2 className="text-lg font-semibold text-gray-700 mb-3 ml-1">
                                     Histórico de Consultas
                                 </h2>
                                 <div className="flex flex-col gap-4">
-                                    {history.map((app) => (
+                                    {historyAppointments.map((app) => (
                                         <HistoryCard key={app.id} data={app} />
                                     ))}
                                 </div>

@@ -12,10 +12,10 @@ export function UpcomingCard({ data }: Props) {
             <div className="flex items-center gap-4 mb-4 border-b border-blue-100 pb-4">
                 <div>
                     <h3 className="font-bold text-gray-800 text-lg leading-tight">
-                        {data.doctor.name}
+                        {data.medico.nome}
                     </h3>
                     <p className="text-[1rem] text-gray-500 font-medium">
-                        {data.doctor.specialty}
+                        {data.medico.especialidade}
                     </p>
                 </div>
             </div>
@@ -25,9 +25,9 @@ export function UpcomingCard({ data }: Props) {
                 <div className="flex items-center gap-2 text-gray-700 font-semibold bg-white/60 px-3 py-1.5 rounded-lg">
                     <Clock size={18} className="text-agro-blue" />
                     <span className="text-[1rem]">
-                        {data.date}:{' '}
+                        {data.data}:{' '}
                         <span className="text-[1rem] font-bold text-agro-blue">
-                            {data.time}
+                            {data.hora}
                         </span>
                     </span>
                 </div>

@@ -8,7 +8,6 @@ import {
 import { api } from '../services/api';
 import { authService } from '../services/authService';
 import type { LoginDTO, UserRole } from '../types/auth';
-
 interface UserState {
     cpf: string;
     nome: string;
@@ -30,7 +29,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<UserState | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // 1. Ao iniciar o App, verifica se já tem token salvo
     useEffect(() => {
         const storagedUser = localStorage.getItem('@CuidAgro:user');
         const storagedToken = localStorage.getItem('@CuidAgro:token');
@@ -52,6 +50,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const signIn = async ({ login, senha }: LoginDTO) => {
         try {
             const response = await authService.login({ login, senha });
+            console.log(response);
+            
             if (!response.token) {
                 throw new Error("O servidor não retornou um token de acesso.");
             }
@@ -68,6 +68,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             setUser(usuario);
         } catch (error) {
             console.error(error);
+            throw error;
         }
     };
 

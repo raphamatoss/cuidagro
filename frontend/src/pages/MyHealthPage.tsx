@@ -1,61 +1,122 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Save, Activity, Ruler, Weight } from 'lucide-react';
+import {
+    ChevronLeft,
+    Save,
+    Activity,
+    Ruler,
+    Weight,
+    Loader2,
+} from 'lucide-react';
 import { Input } from '../components/Input';
-import { diseaseService } from '../services/diseaseService';
-import type { Doencas } from '../types/disease';
+import { useModal } from '../contexts/useModalContext';
+import { useAuth } from '../contexts/AuthContext';
+import { healthService } from '../services/healthService';
+import type { Disease } from '../types/health';
 
 export default function MyHealthPage() {
     const navigate = useNavigate();
+    const { showModal } = useModal();
+    const { user } = useAuth();
+
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
 
-    // Estados para os dados do formulário
-    const [diseases, setDiseases] = useState<string[]>([]);
-    const [availableDiseases, setAvailableDiseases] = useState<Doencas[]>([]);
-    const [allergies, setAllergies] = useState<string[]>([]);
-    const [hasMedAllergy, setHasMedAllergy] = useState<string | null>(null); // 'sim' ou 'nao'
+    const [weight, setWeight] = useState('');
+    const [height, setHeight] = useState('');
+    const [selectedDiseaseNames, setSelectedDiseaseNames] = useState<string[]>(
+        [],
+    );
 
-    // Carregar doenças da API
+    const [availableDiseases, setAvailableDiseases] = useState<Disease[]>([]);
+
     useEffect(() => {
-        const fetchDoencas = async () => {
+        async function loadOptions() {
             try {
-                const data = await diseaseService.getAll();
-                setAvailableDiseases(data);
+                const list = await healthService.getAvailableDiseases();
+                setAvailableDiseases(list);
             } catch (error) {
-                console.error('Erro ao carregar doenças', error);
+                console.error('Erro ao carregar opções', error);
+                showModal({
+                    type: 'error',
+                    title: 'Erro',
+                    description:
+                        'Erro ao carregar opções de doenças. Tente novamente mais tarde.',
+                });
+            } finally {
+                setIsLoading(false);
             }
-        };
+        }
+        loadOptions();
+    }, [showModal]);
 
-        fetchDoencas();
-    }, []);
+    const toggleItem = (item: string) => {
+        setSelectedDiseaseNames((prev) =>
+            prev.includes(item)
+                ? prev.filter((i) => i !== item)
+                : [...prev, item],
+        );
+    };
 
-    // Função auxiliar para marcar/desmarcar itens
-    const toggleItem = (
-        list: string[],
-        setList: React.Dispatch<React.SetStateAction<string[]>>,
-        item: string,
-    ) => {
-        if (list.includes(item)) {
-            setList(list.filter((i) => i !== item));
-        } else {
-            setList([...list, item]);
+    const handleSubmit = async (e?: React.FormEvent) => {
+        if (e) e.preventDefault();
+
+        if (!user?.cpf) {
+            showModal({
+                type: 'error',
+                title: 'Erro',
+                description: 'Usuário não identificado.',
+            });
+            return;
+        }
+
+        setIsSubmitting(true);
+
+        try {
+            const doencasPayload = selectedDiseaseNames.map((name) => ({
+                nome: name,
+            }));
+
+            const payload = {
+                cpf: user.cpf,
+                peso: parseFloat(weight.replace(',', '.')) || 0,
+                altura: parseFloat(height.replace(',', '.')) || 0,
+                doencas: doencasPayload,
+            };
+
+            console.log('Enviando:', payload);
+
+            await healthService.saveHealthData(payload);
+
+            showModal({
+                type: 'success',
+                title: 'Dados Salvos!',
+                description: 'Suas informações foram registradas com sucesso.',
+                onConfirm: () => navigate('/home'),
+            });
+        } catch (error) {
+            console.error(error);
+            showModal({
+                type: 'error',
+                title: 'Erro ao Salvar',
+                description:
+                    'Não foi possível salvar os dados. Tente novamente.',
+            });
+        } finally {
+            setIsSubmitting(false);
         }
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-
-        // Simula salvamento
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-
-        alert('Dados de saúde atualizados com sucesso!');
-        navigate('/home');
-    };
+    if (isLoading) {
+        return (
+            <div className="flex h-screen items-center justify-center bg-gray-50 text-agro-blue">
+                <Loader2 className="animate-spin" size={48} />
+            </div>
+        );
+    }
 
     return (
-        <div className="flex min-h-screen flex-col bg-gray-50 pb-16">
-            {/* HEADER */}
+        <div className="flex min-h-screen flex-col bg-gray-50 pb-24">
             <header className="bg-white px-4 py-4 shadow-sm sticky top-0 z-20 flex items-center gap-4">
                 <button
                     onClick={() => navigate(-1)}
@@ -73,207 +134,87 @@ export default function MyHealthPage() {
                 </div>
             </header>
 
-            <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-6">
-                {/* SEÇÃO 1: DOENÇAS CRÔNICAS */}
+            <form className="p-4 flex flex-col gap-6">
                 <section className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
                     <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
                         <Activity className="text-agro-blue" size={20} />
-                        Doenças que possui
+                        Doenças diagnosticadas
                     </h2>
 
                     <div className="flex flex-col gap-3">
-                        {availableDiseases.map((doenca) => {
-                            const isSelected = diseases.includes(doenca.nome);
-
-                            return (
-                                <label
-                                    key={doenca.nome}
-                                    className={`
+                        {availableDiseases.length > 0 ? (
+                            availableDiseases.map((doenca) => {
+                                const isSelected =
+                                    selectedDiseaseNames.includes(doenca.nome);
+                                return (
+                                    <label
+                                        key={doenca.nome}
+                                        className={`
                                         flex items-center gap-3 p-3 border rounded-xl hover:bg-blue-50 cursor-pointer transition-all
-                                        ${
-                                            isSelected
-                                                ? 'bg-blue-100/80 border-blue-200 shadow-sm'
-                                                : 'bg-white border-gray-100 hover:bg-gray-50'
-                                        }`}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        className="w-5 h-5 accent-agro-blue rounded focus:ring-agro-blue"
-                                        checked={isSelected}
-                                        onChange={() =>
-                                            toggleItem(
-                                                diseases,
-                                                setDiseases,
-                                                doenca.nome,
-                                            )
-                                        }
-                                    />
-                                    <span
-                                        className={`font-medium ${isSelected ? 'text-agro-blue' : 'text-gray-600'}`}
+                                        ${isSelected ? 'bg-blue-100/80 border-blue-200 shadow-sm' : 'bg-white border-gray-100'}
+                                    `}
                                     >
-                                        {doenca.nome}
-                                    </span>
-                                </label>
-                            );
-                        })}
-
-                        {/* Campo "Outra" */}
-                        <div className="mt-2 ">
-                            <Input
-                                label="Outra doença (se houver):"
-                                placeholder="Digite aqui..."
-                                id="other_disease"
-                                className="h-10 text-sm"
-                            />
-                        </div>
+                                        <input
+                                            type="checkbox"
+                                            className="w-5 h-5 accent-agro-blue rounded focus:ring-agro-blue"
+                                            checked={isSelected}
+                                            onChange={() =>
+                                                toggleItem(doenca.nome)
+                                            }
+                                        />
+                                        <span
+                                            className={`font-medium ${isSelected ? 'text-agro-blue' : 'text-gray-600'}`}
+                                        >
+                                            {doenca.nome}
+                                        </span>
+                                    </label>
+                                );
+                            })
+                        ) : (
+                            <p className="text-gray-400 text-sm">
+                                Nenhuma doença cadastrada no sistema.
+                            </p>
+                        )}
                     </div>
                 </section>
 
-                {/* SEÇÃO 2: DADOS CORPORAIS */}
                 <section className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <h2 className="font-bold text-gray-800 mb-4">
+                    <h2 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
+                        <Weight className="text-agro-blue" size={20} />
                         Medidas Corporais
                     </h2>
                     <div className="grid grid-cols-2 gap-4">
                         <Input
                             id="weight"
                             label="Peso (kg)"
-                            placeholder="00,0"
+                            placeholder="Ex: 70.5"
                             type="number"
                             step="0.1"
                             icon={Weight}
+                            value={weight}
+                            onChange={(e) => setWeight(e.target.value)}
                         />
                         <Input
                             id="height"
                             label="Altura (m)"
-                            placeholder="1,00"
+                            placeholder="Ex: 1.75"
                             type="number"
                             step="0.01"
                             icon={Ruler}
+                            value={height}
+                            onChange={(e) => setHeight(e.target.value)}
                         />
                     </div>
                 </section>
-
-                {/* SEÇÃO 3: ALERGIAS */}
-                <section className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
-                    <h2 className="font-bold text-gray-800 mb-4">Alergias</h2>
-
-                    <div className="mb-6">
-                        <p className="text-sm font-semibold text-gray-700 mb-2">
-                            Alérgico a medicamentos?
-                        </p>
-                        <div className="flex gap-4">
-                            <label
-                                className={`
-                                    flex-1 py-3 text-center rounded-xl border cursor-pointer font-bold transition-all shadow-sm
-                                    ${
-                                        hasMedAllergy === 'Sim'
-                                            ? 'bg-green-50 border-green-500 text-green-700 ring-1 ring-green-500'
-                                            : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
-                                    }
-                                `}
-                            >
-                                <input
-                                    type="radio"
-                                    name="med_allergy"
-                                    value="Sim"
-                                    className="hidden"
-                                    onChange={() => setHasMedAllergy('Sim')}
-                                />
-                                Sim
-                            </label>
-
-                            <label
-                                className={`
-                                    flex-1 py-3 text-center rounded-xl border cursor-pointer font-bold transition-all shadow-sm
-                                    ${
-                                        hasMedAllergy === 'Não'
-                                            ? 'bg-red-50 border-red-500 text-red-700 ring-1 ring-red-500'
-                                            : 'bg-gray-50 border-gray-200 text-gray-400 hover:bg-gray-100'
-                                    }
-                                `}
-                            >
-                                <input
-                                    type="radio"
-                                    name="med_allergy"
-                                    value="Não"
-                                    className="hidden"
-                                    onChange={() => setHasMedAllergy('Não')}
-                                />
-                                Não
-                            </label>
-                        </div>
-                    </div>
-
-                    <div className="border-t border-gray-100 my-4"></div>
-
-                    <p className="text-sm font-semibold text-gray-700 mb-3">
-                        Intolerância alimentar:
-                    </p>
-
-                    <div className="flex flex-col gap-3">
-                        {[
-                            'Lactose',
-                            'Glúten',
-                            'Frutos do Mar',
-                            'Amendoim',
-                            'Ovos',
-                        ].map((food) => {
-                            const isSelected = allergies.includes(food);
-                            return (
-                                <label
-                                    key={food}
-                                    className={`
-                                        flex items-center gap-3 p-3 border rounded-xl cursor-pointer transition-all
-                                        ${
-                                            isSelected
-                                                ? 'bg-blue-100/80 border-blue-200 shadow-sm'
-                                                : 'bg-white border-gray-100 hover:bg-gray-50'
-                                        }
-                                    `}
-                                >
-                                    <input
-                                        type="checkbox"
-                                        className="w-5 h-5 accent-agro-blue rounded focus:ring-agro-blue"
-                                        checked={isSelected}
-                                        onChange={() =>
-                                            toggleItem(
-                                                allergies,
-                                                setAllergies,
-                                                food,
-                                            )
-                                        }
-                                    />
-                                    <span
-                                        className={`font-medium ${isSelected ? 'text-agro-blue' : 'text-gray-600'}`}
-                                    >
-                                        {food}
-                                    </span>
-                                </label>
-                            );
-                        })}
-
-                        <div className="mt-2">
-                            <Input
-                                id="other_food"
-                                label="Outro alimento:"
-                                placeholder="Ex: Leite de soja..."
-                                className="h-10 text-sm"
-                            />
-                        </div>
-                    </div>
-                </section>
-
-                <div className="h-4"></div>
             </form>
 
             <div className="fixed bottom-0 left-0 right-0 p-4 bg-white border-t border-gray-100 z-30">
                 <button
-                    onClick={handleSubmit}
+                    onClick={() => handleSubmit()}
                     disabled={isSubmitting}
-                    className="w-full h-14 bg-agro-blue text-white rounded-full font-bold text-lg shadow-lg shadow-blue-200 flex items-center justify-center gap-2 active:scale-95 transition-all"
+                    className="w-full h-14 bg-agro-blue text-white rounded-full font-bold text-lg shadow-lg shadow-blue-200 flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-blue-800 disabled:opacity-70"
                 >
-                    {isSubmitting ? 'Salvando...' : 'Salvar Alterações'}
+                    {isSubmitting ? 'Enviando...' : 'Salvar Dados'}
                     {!isSubmitting && <Save size={20} />}
                 </button>
             </div>

@@ -21,20 +21,31 @@ export default function LoginPage() {
         resolver: zodResolver(loginSchema),
     });
 
-    // Função que será chamada quando os dados forem válidos
     const onSubmit = async (data: LoginFormData) => {
         try {
-            console.log('Dados prontos para o back-end:', data);
-
-            await signIn(data);
-
+            await signIn(data); 
+            
             navigate('/home');
-        } catch (error) {
-            console.error(error);
-            const msgErro =
-                (error as { response?: { status?: number } })?.response?.status === 403 || (error as { response?: { status?: number } })?.response?.status === 401
-                    ? 'E-mail ou senha incorretos.'
-                    : 'Erro ao conectar com o servidor.';
+            
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        } catch (error: any ) {
+            console.error("Erro capturado na Login:", error);
+            
+            let msgErro = 'Erro ao conectar com o servidor.';
+            
+            // Verifica se é erro de resposta (Backend respondeu erro)
+            if (error.response) {
+                if (error.response.status === 401 || error.response.status === 403) {
+                     msgErro = 'E-mail ou senha incorretos.';
+                } else if (error.response.data && typeof error.response.data === 'string') {
+                     // Pega mensagem que o Java mandou, se houver
+                     msgErro = error.response.data;
+                }
+            } 
+            // Verifica se é erro de rede (Servidor desligado/Empty Response)
+            else if (error.request) {
+                msgErro = 'Servidor indisponível ou erro de conexão.';
+            }
 
             showModal({
                 type: 'error',

@@ -1,7 +1,7 @@
-import type { Doencas } from '../types/disease';
+import type { Disease } from "../types/health";
 
 export const diseaseService = {
-    getAll: async (): Promise<Doencas[]> => {
+    getAll: async (): Promise<Disease[]> => {
         const token =
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJhdXRoLWFwaSIsInN1YiI6InZpbmlAZ21haWwuY29tIiwiZXhwIjoxNzcwNjA0NzYxfQ.FhHpNZHqLFwL51Q7H8P5x4TEBPGjGewaCGzdsbL-qmk';
 

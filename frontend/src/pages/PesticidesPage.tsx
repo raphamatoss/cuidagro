@@ -13,37 +13,45 @@ import {
 import type { Pesticide } from '../types/pesticide';
 import { pesticideService } from '../services/pesticideService';
 import { Input } from '../components/Input';
+import { useModal } from '../contexts/useModalContext';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function PesticidesPage() {
     const navigate = useNavigate();
+    const { user } = useAuth();
+    const { showModal } = useModal();
 
-    // Estados
     const [pesticides, setPesticides] = useState<Pesticide[]>([]);
     const [selectedNames, setSelectedNames] = useState<string[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [otherPesticide, setOtherPesticide] = useState('');
+
     const [isLoading, setIsLoading] = useState(true);
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // Busca dados ao carregar a tela
     useEffect(() => {
         async function fetchData() {
             try {
                 const data = await pesticideService.getAll();
-                console.log("Dados vindos da API:", data);
+                console.log('Dados vindos da API:', data);
                 setPesticides(data);
             } catch (error) {
                 console.error(error);
-                alert('Erro ao carregar lista de agrotóxicos');
+                showModal({
+                    type: 'error',
+                    title: 'Erro ao Carregar',
+                    description:
+                        'Não foi possível carregar a lista de agrotóxicos. Tente novamente mais tarde.',
+                });
+                navigate('/home');
             } finally {
                 setIsLoading(false);
             }
         }
 
         fetchData();
-    }, []);
+    }, [showModal, navigate]);
 
-    // Lógica de Seleção (Toggle) mudei para usar nome ao invés de id
     const togglePesticide = (name: string) => {
         setSelectedNames((prev) =>
             prev.includes(name)
@@ -59,19 +67,64 @@ export default function PesticidesPage() {
 
     // Envio do Formulário
     const handleSubmit = async () => {
+        if (!user?.cpf) {
+            showModal({
+                type: 'error',
+                title: 'Erro',
+                description: 'Usuário não identificado.',
+            });
+            return;
+        }
+
+        if (selectedNames.length === 0 && !otherPesticide) {
+            showModal({
+                type: 'warning',
+                title: 'Seleção vazia',
+                description:
+                    'Selecione pelo menos um produto ou preencha o campo "Outros".',
+            });
+            return;
+        }
+
         setIsSubmitting(true);
 
-        await new Promise((resolve) => setTimeout(resolve, 1500));
+        try {
+            // Monta a lista de objetos Pesticide baseada nos nomes selecionados
+            const selectedObjects = pesticides.filter((p) =>
+                selectedNames.includes(p.nome),
+            );
 
-        console.log('Selecionados:', selectedNames, 'Outro:', otherPesticide);
+            const payload = {
+                cpf: user.cpf,
+                agrotoxicos: selectedObjects,
+                outro: otherPesticide,
+            };
 
-        alert('Dados enviados com sucesso!');
-        navigate('/home');
+            console.log('Enviando:', payload);
+
+            await pesticideService.submitForm(payload);
+
+            showModal({
+                type: 'success',
+                title: 'Dados Enviados!',
+                description: 'Obrigado por informar os produtos utilizados.',
+                onConfirm: () => navigate('/home'),
+            });
+        } catch (error) {
+            console.error(error);
+            showModal({
+                type: 'error',
+                title: 'Erro ao enviar',
+                description:
+                    'Não foi possível salvar os dados. Tente novamente.',
+            });
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
         <div className="flex min-h-screen flex-col bg-white pb-28">
-            {/* HEADER */}
             <header className="bg-white px-4 py-4 shadow-sm sticky top-0 z-20">
                 <div className="flex items-center gap-4 mb-4">
                     <button
@@ -114,12 +167,16 @@ export default function PesticidesPage() {
                     <>
                         <div className="flex flex-col gap-3">
                             {filteredList.map((item) => {
-                                const isSelected = selectedNames.includes(item.nome);
+                                const isSelected = selectedNames.includes(
+                                    item.nome,
+                                );
 
                                 return (
                                     <div
-                                        key={item.id}
-                                        onClick={() => togglePesticide(item.nome)}
+                                        key={item.nome}
+                                        onClick={() =>
+                                            togglePesticide(item.nome)
+                                        }
                                         className={`
                                             flex items-center justify-between p-4 rounded-2xl border cursor-pointer transition-all
                                             ${
@@ -155,9 +212,6 @@ export default function PesticidesPage() {
                                                 >
                                                     {item.nome}
                                                 </span>
-
-                                                
-                                                
                                             </div>
                                         </div>
 
@@ -165,9 +219,11 @@ export default function PesticidesPage() {
                                         <button
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                alert(
-                                                    `Produto: ${item.nome}\nClasse: ${item.classe}`,
-                                                );
+                                                showModal({
+                                                    type: 'info',
+                                                    title: item.nome,
+                                                    description: `Classe: ${item.classe}`,
+                                                });
                                             }}
                                             className="p-2 text-gray-700 hover:text-agro-blue"
                                         >
