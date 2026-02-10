@@ -69,12 +69,10 @@ Certifique-se de ter instalado:
 
 ### 1️⃣ Configuração do Banco de Dados
 
-Antes de iniciar, crie um banco de dados no PostgreSQL chamado `mydb` (ou o nome de sua preferência).
+Crie o banco de dados com base nesse modelo:
 
-```sql
-CREATE DATABASE mydb;
+![Texto Alternativo](diagramas/estruturaBD.png)
 
-```
 
 ---
 
