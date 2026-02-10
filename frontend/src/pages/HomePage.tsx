@@ -2,7 +2,6 @@ import {
     Activity,
     Sprout,
     Calendar,
-    Stethoscope,
     User,
     Bell,
     Menu,
@@ -12,11 +11,25 @@ import {
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { NavItem } from '../components/NavItem';
+import { useAuth } from '../contexts/AuthContext';
 
 export default function HomePage() {
     const navigate = useNavigate();
+    const { user } = useAuth();
 
-    // Dados do menu para gerar o grid dinamicamente
+    const getGreeting = () => {
+        const hour = new Date().getHours();
+        
+        // De 04:00 até 11:59 -> Bom dia
+        if (hour >= 4 && hour < 12) return 'Bom dia';
+        
+        // De 12:00 até 17:59 -> Boa tarde
+        if (hour >= 12 && hour < 18) return 'Boa tarde';
+        
+        // De 18:00 até 03:59 -> Boa noite
+        return 'Boa noite';
+    };
+
     const menuItems = [
         {
             title: 'Minha Saúde',
@@ -39,13 +52,6 @@ export default function HomePage() {
             color: 'bg-purple-100 text-purple-600',
             route: '/appointments',
         },
-        {
-            title: 'Falar com Médico',
-            description: 'Telemedicina',
-            icon: Stethoscope,
-            color: 'bg-orange-100 text-orange-600',
-            route: '/doctor',
-        },
     ];
 
     return (
@@ -53,10 +59,10 @@ export default function HomePage() {
             <header className="px-6 pt-12 pb-6 flex items-center justify-between bg-white shadow-sm sticky top-0 z-10">
                 <div>
                     <p className="text-gray-500 text-sm font-medium">
-                        Boa tarde,
+                        {getGreeting()},
                     </p>
                     <h1 className="text-2xl font-bold text-gray-800">
-                        João da Silva
+                        {user?.nome ? user.nome.split(' ')[0]: 'Visitante'}
                     </h1>
                 </div>
                 <button className="p-2 rounded-full hover:bg-gray-100 transition-colors relative">
@@ -93,12 +99,11 @@ export default function HomePage() {
                     </div>
                 </div>
 
-                {/* Grid de funcionalidades */}
                 <div>
                     <h3 className="text-gray-700 font-bold mb-4 text-lg">
                         Acesso Rápido
                     </h3>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 gap-4">
                         {menuItems.map((item, index) => (
                             <button
                                 key={index}

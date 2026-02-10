@@ -7,6 +7,7 @@ import RegisterPage from './pages/RegisterPage';
 import SymptomsPage from './pages/SymptomsPage';
 import MyHealthPage from './pages/MyHealthPage';
 import AppointmentsPage from './pages/AppointmentsPage';
+//import NewAppointmentPage from './pages/NewAppointmentPage';
 import DiagnosisResultPage from './pages/DiagnosisPage';
 
 import PesticidesPage from './pages/PesticidesPage';
@@ -27,6 +28,7 @@ export default function App() {
                         <Route path="/symptoms" element={<SymptomsPage />} />
                         <Route path="/health" element={<MyHealthPage />} />
                         <Route path="/appointments" element={<AppointmentsPage />}/>
+                        {/* <Route path="/appointments/new" element={<NewAppointmentPage />}/> */}
                         <Route path="/pesticide" element={<PesticidesPage />} />
                         <Route path="/diagnosis" element={<DiagnosisResultPage />}/>
                         <Route path="/alerts" element={<AlertsPage />} />

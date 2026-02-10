@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, Loader2 } from 'lucide-react';
+import { ChevronLeft, Loader2, CalendarX } from 'lucide-react';
+import { useEffect, useState } from 'react';
+
 import type { Appointment } from '../types/appointment';
 import { UpcomingCard } from '../components/appointments/UpcomingCard';
 import { HistoryCard } from '../components/appointments/HistoryCard';
 import { appointmentService } from '../services/appointmentService';
-import { useEffect, useState } from 'react';
 import { useModal } from '../contexts/useModalContext';
 import { useAuth } from '../contexts/AuthContext';
 
@@ -16,98 +17,91 @@ export default function AppointmentsPage() {
     const [appointments, setAppointments] = useState<Appointment[]>([]);
     const [isLoading, setLoading] = useState(true);
 
-    // Efeito para carregar os dados das consultas
     useEffect(() => {
-        async function fetchData() {
-            if (!user?.cpf) {
-                setLoading(false);
-                return;
-            }
-            
+        const fetchAppointments = async () => {
+            if (!user?.cpf) return;
             try {
+                setLoading(true);
                 const data = await appointmentService.getAll(user.cpf);
-                setAppointments(data);
-                console.log(data);
                 
+                // Ordena por data (mais recente primeiro)
+                data.sort((a, b) => new Date(b.diaHora).getTime() - new Date(a.diaHora).getTime());
+                setAppointments(data);
             } catch (error) {
-                console.error('Erro ao buscar consultas: ', error);
-                showModal({
-                    type: 'error',
-                    title: 'Falha ao carregar consultas',
-                    description: 'Não foi possível buscar sua agenda.',
-                });
+                console.error(error);
             } finally {
                 setLoading(false);
             }
+        };
+
+        fetchAppointments();
+    }, [user?.cpf]);
+
+    const handleCancel = async (consulta: Appointment) => {
+        try {
+            await appointmentService.cancel(consulta);
+            showModal({
+                type: 'success',
+                title: 'Consulta Cancelada',
+                description: 'O agendamento foi cancelado com sucesso.'
+            });
+            if (user?.cpf) {
+                const data = await appointmentService.getAll(user.cpf);
+                data.sort((a, b) => new Date(b.diaHora).getTime() - new Date(a.diaHora).getTime());
+                setAppointments(data);
+            }
+        } catch (error) {
+            console.error(error);
+            showModal({
+                type: 'error',
+                title: 'Erro',
+                description: 'Não foi possível cancelar a consulta.'
+            });
         }
-        fetchData();
-    }, [user, showModal]);
+    };
 
-    const activeAppointments = appointments.filter(
-        (a) => a.status === 'AGENDADA' || a.status === 'PENDENTE',
-    );
-
-    // Pegamos a primeira da lista de ativas para ser a "Destaque"
-    const nextAppointment =
-        activeAppointments.length > 0 ? activeAppointments[0] : null;
-
-    // Consideramos "Histórico" tudo que já foi finalizado
-    const historyAppointments = appointments.filter(
-        (a) => a.status === 'CONCLUIDA' || a.status === 'CANCELADA',
-    );
+    // Filtros
+    const activeAppointments = appointments.filter(a => a.status === 'AGENDADA' || a.status === 'PENDENTE');
+    const historyAppointments = appointments.filter(a => a.status === 'CONCLUIDA' || a.status === 'CANCELADA');
+    const nextAppointment = activeAppointments.length > 0 ? activeAppointments[0] : null;
 
     return (
         <div className="flex min-h-screen flex-col bg-white pb-28">
-            {/* HEADER */}
             <header className="bg-white px-4 py-4 shadow-sm sticky top-0 z-20 flex items-center gap-4">
-                <div className="flex items-center gap-4">
-                    <button
-                        onClick={() => navigate(-1)}
-                        className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                    >
-                        <ChevronLeft size={24} className="text-gray-600" />
-                    </button>
-                    <h1 className="text-lg font-bold text-gray-800">
-                        Minhas Consultas
-                    </h1>
-                </div>
+                <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-gray-100">
+                    <ChevronLeft size={24} className="text-gray-600" />
+                </button>
+                <h1 className="text-lg font-bold text-gray-800">Minhas Consultas</h1>
             </header>
 
             <main className="p-6 flex flex-col gap-8">
-                {/* Estado de carregamento */}
-                {isLoading && (
-                    <div className="flex flex-col items-center justify-center py-20 text-gray-400">
-                        <Loader2 className="animate-spin mb-2" size={32} />
-                        <p>Carregando agenda...</p>
-                    </div>
-                )}
-
-                {!isLoading && (
+                {isLoading ? (
+                    <div className="flex justify-center py-20"><Loader2 className="animate-spin" /></div>
+                ) : (
                     <>
-                        {/* SEÇÃO 1: PRÓXIMA CONSULTA */}
                         {nextAppointment ? (
                             <section className="border-b-2 border-gray-200 pb-8">
-                                <h2 className="text-xl font-semibold text-gray-800 mb-3 ml-1">
-                                    Próxima consulta
-                                </h2>
+                                <h2 className="text-xl font-semibold text-gray-800 mb-3">Próxima consulta</h2>
                                 <UpcomingCard data={nextAppointment} />
+                                
+                                <button 
+                                    onClick={() => handleCancel(nextAppointment)}
+                                    className="mt-4 flex items-center gap-2 text-red-600 text-sm font-bold hover:bg-red-50 p-2 rounded-lg transition-colors w-full justify-center border border-red-100">
+                                    <CalendarX size={16} /> Cancelar este agendamento
+                                </button>
                             </section>
                         ) : (
-                            // Caso não tenha consulta agendada
                             <div className="bg-gray-50 p-6 rounded-2xl text-center text-gray-500">
-                                Nenhuma consulta agendada para breve.
+                                Nenhuma consulta agendada.
                             </div>
                         )}
 
-                        {/* SEÇÃO 2: HISTÓRICO */}
                         {historyAppointments.length > 0 && (
                             <section>
-                                <h2 className="text-lg font-semibold text-gray-700 mb-3 ml-1">
-                                    Histórico de Consultas
-                                </h2>
+                                <h2 className="text-lg font-semibold text-gray-700 mb-3">Histórico</h2>
                                 <div className="flex flex-col gap-4">
-                                    {historyAppointments.map((app) => (
-                                        <HistoryCard key={app.id} data={app} />
+                                    {historyAppointments.map((app, idx) => (
+                                        <HistoryCard key={idx} data={app} />
                                     ))}
                                 </div>
                             </section>
@@ -116,12 +110,13 @@ export default function AppointmentsPage() {
                 )}
             </main>
 
-            {/* BOTÃO FLUTUANTE FIXO */}
-            <div className="fixed bottom-0 left-0 right-0 p-6 bg-white border-t border-gray-50 z-30">
-                <button className="w-full h-14 bg-agro-blue text-white rounded-full font-bold text-lg shadow-lg shadow-blue-200 flex items-center justify-center gap-2 active:scale-95 transition-all hover:bg-blue-800">
+            {/* <div className="fixed bottom-0 left-0 right-0 p-6 bg-white border-t border-gray-50 z-30">
+                <button 
+                    onClick={() => navigate('/appointments/new')}
+                    className="w-full h-14 bg-agro-blue text-white rounded-full font-bold text-lg shadow-lg flex items-center justify-center gap-2 hover:bg-blue-800">
                     Agendar consulta
                 </button>
-            </div>
+            </div> */}
         </div>
     );
 }

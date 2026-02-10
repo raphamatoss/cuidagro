@@ -42,13 +42,15 @@ export default function MyHealthPage() {
                     title: 'Erro',
                     description:
                         'Erro ao carregar opções de doenças. Tente novamente mais tarde.',
+
                 });
+                navigate('/home');
             } finally {
                 setIsLoading(false);
             }
         }
         loadOptions();
-    }, [showModal]);
+    }, [showModal, navigate]);
 
     const toggleItem = (item: string) => {
         setSelectedDiseaseNames((prev) =>

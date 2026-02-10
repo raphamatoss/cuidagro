@@ -1,29 +1,19 @@
 import { api } from './api';
-import type { Appointment, ConsultaDTO } from '../types/appointment';
+import type { Appointment } from '../types/appointment';
 
 export const appointmentService = {
     getAll: async (cpf: string): Promise<Appointment[]> => {
-        const response = await api.get<ConsultaDTO[]>(
+        const response = await api.get<Appointment[]>(
             `/consultas/historico?cpf=${cpf}`,
         );
+        return response.data || [];
+    },
 
-        if (!response.data) return [];
+    schedule: async (consulta: Appointment): Promise<void> => {
+        await api.post('/consultas/agendar', consulta);
+    },
 
-        return response.data.map((consulta) => ({
-            id: consulta.id,
-            medico: {
-                nome: consulta.medico?.nome || 'Médico não informado',
-                especialidade: consulta.medico?.especialidade || 'Clínico Geral',
-            },
-            data: formatarData(consulta.data),
-            hora: consulta.hora,
-            status: consulta.status,
-        }));
+    cancel: async (consulta: Appointment): Promise<void> => {
+        await api.post('/consultas/cancelar', consulta);
     },
 };
-
-function formatarData(dataISO: string): string {
-    if (!dataISO) return '--/--/----';
-    const [ano, mes, dia] = dataISO.split('-');
-    return `${dia}/${mes}/${ano}`;
-}
