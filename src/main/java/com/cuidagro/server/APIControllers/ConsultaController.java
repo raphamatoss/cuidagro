@@ -2,6 +2,7 @@ package com.cuidagro.server.APIControllers;
 
 import com.cuidagro.server.Consulta;
 import com.cuidagro.server.DBCommunication.DBConsulta;
+import com.cuidagro.server.Medico;
 import com.cuidagro.server.helpers.Serializacao;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,6 +19,14 @@ public class ConsultaController {
         ArrayList<Consulta> historico = DBConsulta.getHistoricoPorCpf(cpf);
 
         return Serializacao.serializarListaConsultas(historico);
+    }
+
+    @GetMapping("/medicos")
+    public String obterMedicos() {
+        // Busca no banco (já trazendo Endereço e Local montados)
+        ArrayList<Medico> medicos = DBConsulta.getMedicos();
+
+        return Serializacao.serializarArrayList(medicos);
     }
 
     // Agendar consulta:

@@ -3,12 +3,15 @@ package com.cuidagro.server.DBCommunication;
 import com.cuidagro.server.Agricultor;
 import com.cuidagro.server.Consulta;
 import com.cuidagro.server.Medico;
+import com.cuidagro.server.enums.Especialidade;
+import com.cuidagro.server.enums.PapelUsuario;
 import com.cuidagro.server.enums.StatusConsulta;
 import com.cuidagro.server.enums.UnidadeFederativa;
 import com.cuidagro.server.helpers.Endereco;
 import com.cuidagro.server.helpers.Local;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
@@ -142,6 +145,36 @@ public class DBConsulta {
         return consultas;
     }
 
+    public static ArrayList<Medico> getMedicos() {
+        try (Connection con = DBConnection.getConnection()) { // depois checa se é médico
+            String sql = "select * from mydb.medico";
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            try (ResultSet set = preparedStatement.executeQuery()) {
+                ArrayList<Medico> medicos = new ArrayList<>();
+                while (set.next()) {
+                    String nome = set.getString("nome");
+                    String cpf = set.getString("cpf");
+                    String numero = set.getString("numero");
+                    String senha = set.getString("senha_hash");
+                    LocalDate nascimento = set.getDate("dataNascimento").toLocalDate();
+                    String papel = set.getString("papel");
+                    String crm = set.getString("crm");
+                    String email = set.getString("email");
+                    String especialidade = set.getString("especialidade");
+
+                    preparedStatement.close();
+                    medicos.add(new Medico(nome, cpf, nascimento, crm, Especialidade.valueOf(especialidade), email, numero, senha, PapelUsuario.valueOf(papel)));
+                }
+                return medicos;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
      // Atualiza o status da consulta (Ex: Cancelamento).
     public static boolean atualizarStatus(Consulta consulta) {

@@ -53,7 +53,7 @@ public class GeradorDePrompt {
         }
 
         prompt.append("Considerando minha situação, gere um diagnóstico parcial. Retorne os dados como um JSON (e nada mais) " +
-                "no formato (Diagnostico: nome; CID: cid; Risco: grau; Descrição: descrição do diagnóstico em até 3 linhas) " +
+                "no formato (diagnostico: nome; cid: cid; risco: grau; descricao: descrição do diagnóstico em até 3 linhas) " +
                 "sendo risco um dos valores a seguir: MUITO_BAIXO, BAIXO, MEDIO, ALTO, MUITO_ALTO.");
 
         return prompt.toString();

@@ -93,4 +93,32 @@ public class DBLogin {
 
         return null;
     }
+
+    public static Agricultor getAgricultor(String cpf) {
+        try (Connection con = DBConnection.getConnection()) { // e por fim se é agricultor
+            String sql = "select * from mydb.agricultor a where a.cpf = ?";
+            PreparedStatement preparedStatement = con.prepareStatement(sql);
+            preparedStatement.setString(1, cpf);
+            try (ResultSet set = preparedStatement.executeQuery()) {
+                if (set.next()) {
+                    String nome = set.getString("nome");
+                    String email = set.getString("email");
+                    String numero = set.getString("numero");
+                    String senha = set.getString("senha_hash");
+                    LocalDate nascimento = set.getDate("dataNascimento").toLocalDate();
+                    String papel = set.getString("papel");
+
+                    preparedStatement.close();
+                    return new Agricultor(nome, cpf, nascimento, email, numero, senha, PapelUsuario.valueOf(papel));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 }

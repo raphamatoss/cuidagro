@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 public class AgrotoxicoForms {
     @JsonProperty("cpf") // por algum motivo, sem a notação mapeando o Jackson não faz o mapeamento do cpf corretamente
     private String cpf;
+    @JsonProperty("agrotoxicos")
     private Agrotoxico[] agrotoxicos;
     private LocalDateTime data;
 
@@ -28,5 +29,9 @@ public class AgrotoxicoForms {
 
     public LocalDateTime getData() {
         return data;
+    }
+
+    public void setData(LocalDateTime data) {
+        this.data = data;
     }
 }

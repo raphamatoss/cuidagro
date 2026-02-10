@@ -6,6 +6,7 @@ import com.cuidagro.server.DBCommunication.DBAgrotoxicos;
 import com.cuidagro.server.helpers.Serializacao;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @RestController
@@ -25,6 +26,7 @@ public class AgrotoxicosController {
 
     @PostMapping(value="/forms")
     public void persistirUsoDeAgrotoxicosPorUsuario(@RequestBody AgrotoxicoForms forms) {
+        if (forms.getData() == null) forms.setData(LocalDateTime.now());
         DBAgrotoxicos.persistirForms(forms);
     }
 }

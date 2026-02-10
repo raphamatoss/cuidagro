@@ -16,6 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import javax.swing.plaf.synth.SynthOptionPaneUI;
+
 @RestController
 @RequestMapping("auth")
 public class AutenticacaoController {
@@ -30,9 +32,12 @@ public class AutenticacaoController {
         var usernamePassword = new UsernamePasswordAuthenticationToken(data.login(), data.senha());
         var auth = this.authenticationManager.authenticate(usernamePassword);
 
-        var token = tokenService.gerarToken(((UsuarioDetails) auth.getPrincipal()).getUsuario());
+        UsuarioDetails userDetails = (UsuarioDetails) auth.getPrincipal();
+        Usuario user = userDetails.getUsuario();
+        var token = tokenService.gerarToken(user);
 
-        return ResponseEntity.ok(new AuthResponseDTO(token));
+        System.out.println("Login user: " + user.getNome());
+        return ResponseEntity.ok(new AuthResponseDTO(token, user.getCpf(), user.getNome(), user.getPapel().toString(), user.getEmail()));
     }
 
     @PostMapping("/register")
