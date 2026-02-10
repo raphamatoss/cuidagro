@@ -3,7 +3,7 @@ import type { Pesticide, PesticideFormDTO } from '../types/pesticide';
 
 export const pesticideService = {
     getAll: async (): Promise<Pesticide[]> => {
-        const response = await api.get<Pesticide[]>('/agrotoxico');
+        const response = await api.get<Pesticide[]>('/agrotoxicos');
         return response.data;
     },
 
