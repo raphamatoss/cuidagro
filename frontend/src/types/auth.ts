@@ -22,10 +22,8 @@ export interface LoginDTO {
 // Dados de USUÁRIO (recebe)
 export interface AuthResponse {
     token: string;
-    usuario: {
-        cpf: string;
-        nome: string;
-        email: string;
-        papel: UserRole;
-    };
+    cpf: string;
+    nome: string;
+    email: string;
+    papel: UserRole;
 }

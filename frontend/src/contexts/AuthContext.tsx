@@ -56,14 +56,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
                 throw new Error("O servidor não retornou um token de acesso.");
             }
 
-            const { token, usuario } = response;
+            const usuario: UserState = {
+                cpf: response.cpf,     
+                nome: response.nome,   
+                email: response.email, 
+                papel: response.papel  
+            };
 
-            // Salva no LocalStorage (Persistência)
-            localStorage.setItem('@CuidAgro:token', token);
+            localStorage.setItem('@CuidAgro:token', response.token);
             localStorage.setItem('@CuidAgro:user', JSON.stringify(usuario));
 
-            // Configura o Axios para as próximas chamadas
-            api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            api.defaults.headers.common['Authorization'] = `Bearer ${response.token}`;
 
             setUser(usuario);
         } catch (error) {
